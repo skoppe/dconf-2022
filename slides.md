@@ -40,6 +40,10 @@ This section is an introduction and sets the playing field
 
 ---
 
+# All views expressed herein are my owner
+
+---
+
 # Microprocessor Trend Data
 
 <div class="h-full flex justify-center -mt-4">
