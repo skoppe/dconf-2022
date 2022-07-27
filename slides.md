@@ -12,10 +12,8 @@ highlighter: shiki
 lineNumbers: false
 # some information about the slides, markdown enabled
 info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
+  Structured Concurrency in D
+  What is it, how does it work and why do we need it.
 # persist drawings in exports and build
 drawings:
   persist: false
@@ -25,22 +23,13 @@ css: unocss
 
 # Structured Concurrency
 
-<!-- <qrCode text="https://skoppe.github.io/dconf-2022"/> -->
-
-insert title
-
-<!--
-This section is an introduction and sets the playing field
-- you must have heard about moore's law
-- its dead
-- instead of faster cpus, we get more of them
-- the challenge is to make use of these extra cores
-- one thing that is for sure is that it is rather difficult
--->
+<!-- <qrCode text="https://skoppe.github.io/dconf-2022/"/> -->
 
 ---
+class: 'text-center'
+---
 
-# All views expressed herein are my owner
+# All views expressed herein are my own
 
 ---
 
@@ -51,6 +40,8 @@ This section is an introduction and sets the playing field
 </div>
 
 <!--
+
+Here is a chart for CPU trends for the last 50 years.
 
 Note the frequency levelling off and the number of cores increasing
 
@@ -90,8 +81,6 @@ class: 'flex flex-col h-full'
 
 
 <!--
-Here we set the stage by what we mean with concurrency
-and how parallelism is a subset of concurrency
 
 - parallelism is the effort of speeding up a computation by splitting it into isolated pieces and running them across different execution contexts (threads, processes, gpus, clusters, etc.)
 - the hard part of parallism is finding those isolated pieces
@@ -343,7 +332,7 @@ Statement --> [*]
 </div>
 
 <div class="bg-white w-1/3 text-black items-center flex flex-col">
-Selecting
+Selection
 ```mermaid {theme: 'neutral', scale: 1.0}
 stateDiagram-v2
 [*] --> Condition
@@ -371,9 +360,85 @@ Condition --> [*]
 
 <!---
 - uses 3 construct to deals with any programming problem: sequence, selection and iteration
-- use of abstractions as building blocks (both in code and data)
-- recursive decomposition of the program as a method of creation/analysis of a program
-- local reasoning helps understandability, and scope nesting is a good way of achieving local reasoning
+
+The important part here is the single entry and single exit
+
+TODO: rephrase
+Looking at a sequence of regular instructions (i.e., without loops or alternatives) is easy. The preconditions of an instruction directly depend on the postconditions of the previous instruction. This is what Dijkstra calls enumerative reasoning. The conceptual gap between a sequence of instructions and the execution of those instructions in time is minimal.
+
+If we want to treat code blocks or function calls as instructions, we should ensure that they share as many properties as possible with the simple instructions. One of these properties is single entry, single exit point. Every instruction, every block of code and every function should have one single entry point so that we can easily check whether the preconditions are met. Similarly, they should have one single exit point so that we analyse a single set of postconditions.
+
+There is another advantage of using a single entry, single exit point strategy. The blocks and the function calls have the same shape as simple instructions. That allows us to apply the same type of reasoning to code blocks and to function calls, and permits us to have a simpler recursive decomposition.
+-->
+
+---
+class: flex flex-col
+---
+
+# Structured Program Theorem
+
+<div class="flex justify-center h-full items-center">
+```mermaid {theme: 'neutral', scale: 0.7}
+stateDiagram-v2
+direction LR
+[*] --> C1
+C1 --> Loop : Yes
+Loop --> C1
+Loop : Statement
+C1 --> S2 : No
+C1 : Condition
+state Loop {
+  direction LR
+  [*] --> S1
+  S1 --> Condition
+  S1 : Statement
+  Left : Statement
+  Right : Statement
+  Condition --> Left : Yes
+  Condition --> Right : No
+  state Left {
+    direction LR
+    [*] --> C2
+    C2 --> Statement
+    Statement --> C2
+    C2 --> [*]
+    C2 : Condition
+  } 
+  Left --> [*]
+  Right --> [*]
+}
+S2 : Statement
+state S2 {
+  direction LR
+  [*] --> C3
+  C3 --> S4
+  S4 --> C3
+  C3 --> [*]
+  C3 : Condition
+  S4 : Statement
+}
+S2 --> S5
+S5 : Statement
+S5 --> [*]
+```
+</div>
+
+<!--
+
+1. use of abstractions as building blocks (both in code and data)
+2. recursive decomposition of the program as a method of creation/analysis of a program
+3. local reasoning helps understandability, and scope nesting is a good way of achieving local reasoning
+4. code blocks should have one entry and one exit point
+5. soundness and completeness: all programs can be safely written in a style that enables structured programming
+
+-->
+
+---
+
+# Structured Programming
+
+<!--
+
 - after some initial opposition, eventually everyone agreed it was better overall
 - it is hard to find an unstructured programming language
 - maybe we have become so accustomed to it that we are blind to unstructured programming
@@ -386,9 +451,6 @@ Top-down we have decomposition, bottom-up we have composition. With that we have
 Composition allows to compose code. We don't have composition with concurrency. We can write a function that retries another function max n times. A for loop, a counter, error handling, and forwarding the error when its retried too often. But doing this with an concurrent function requires a lot of DIY. This is because there is no standard way to call a concurrent function, so we have no way to compose them. This means there are no async algorithms readily available, so people code what they need, with all the bugs that that ensues.
 -->
 
----
-
-# Structured Programming
 
 <div class="shadow bg-gray-100 p-4 m-4 dark:bg-gray-700">
 <mdi-format-quote-open />
@@ -461,18 +523,6 @@ Ownership and lifetime
 - Every async function needs to have a owner<br>
 - An owner needs to outlive all the async functions it owns
 
-Just like with structured programming, one entry, one exit, all encapsulated in one block
-
-This means we need to set the continuation before we start the async work.
-
-##### <span class="text-gray-400">Error handling and cancellation</span>
-
-Because there is always an owner, there is always a place to forward errors to.
-
-Because each async function has a owner, cancellation naturally flows from the owner to the async function.
-
-
-- An error in an async functions must naturally bubble up to its owner
 </div>
 <div class="w-1/2">
 <div class="flex flex-col items-center">
@@ -483,8 +533,51 @@ from https://blog.softwaremill.com/structured-concurrency-and-pure-functions-92d
 </div>
 </div>
 
-<!-- It allows control flow to remain readily evident by the structure of the source code despite the presence of concurrency.
+<!--
+
+Just like with structured programming, one entry, one exit, all encapsulated in one block
+
+This means we need to set the continuation before we start the async work.
+
+- An error in an async functions must naturally bubble up to its owner
+
+
+It allows control flow to remain readily evident by the structure of the source code despite the presence of concurrency.
 -->
+
+---
+
+# Structured Concurrency
+Error handling and cancellation
+
+<div class="flex flex-row">
+<div class="w-1/2">
+Because there is always an owner:<br>
+- there is always a place to forward errors to<br>
+- cancellation naturally flows from the owner to the async function.
+</div>
+
+<div class="w-1/2">
+<div class="flex flex-col items-center">
+<img src="/nesting.png" class="h-80 rounded shadow" />
+
+from https://blog.softwaremill.com/structured-concurrency-and-pure-functions-92dd8ed1a9f2
+</div>
+</div>
+</div>
+
+<!--
+
+Just like with structured programming, one entry, one exit, all encapsulated in one block
+
+This means we need to set the continuation before we start the async work.
+
+- An error in an async functions must naturally bubble up to its owner
+
+
+It allows control flow to remain readily evident by the structure of the source code despite the presence of concurrency.
+-->
+
 
 ---
 
@@ -510,6 +603,15 @@ std::execution
 </dt><dd class="pl-4">SG1, LEWG
 </dd>
 </dl>
+
+<!--
+C++ has P2300 proposal for a framework for managing asynchronous execution on generic execution contexts.
+
+I was a bit skeptical at first, but it turns out it is actually fully structured.
+
+I implemented it roughly verbatim in D.
+
+-->
 
 ---
 
@@ -557,6 +659,13 @@ struct ValueSender(T) {
 }
 ```
 
+<div class="flex justify-end">
+  <a href="https://github.com/symmetryinvestments/concurrency" target="_blank" alt="GitHub"
+    class="text-xl icon-btn opacity-50 !border-none">
+symmetryinvestments/concurrency
+    <carbon-logo-github />
+  </a>
+</div>
 <!--
 
 A ValueSender just sends one value.
@@ -653,6 +762,61 @@ void fun() {
         .syncWait();
 }
 ```
+---
+
+# Senders/Receivers
+Narrow Waist
+
+
+<div class="flex">
+<div>
+
+$O(n + m)$ vs $O(n \times m)$
+
+```mermaid
+   stateDiagram-v2
+     sender1 --> Operations
+     sender2 --> Operations
+     sender3 --> Operations
+     sender4 --> Operations
+     sender5 --> Operations
+     Operations : Operations
+
+     Operations --> sender6
+     Operations --> sender7
+     Operations --> sender8
+     Operations --> sender9
+     Operations --> sender10
+
+```
+</div>
+<div class="w-1/2">
+Operations:<br>
+<br>
+<div class="grid grid-cols-2">
+<span>- then</span>
+<span>- via</span>
+<span>- withStopToken</span>
+<span>- withStopSource</span>
+<span>- race</span>
+<span>- raceAll</span>
+<span>- ignoreError</span>
+<span>- whenAll</span>
+<span>- retry</span>
+<span>- retryWhen</span>
+<span>- toShared</span>
+<span>- forwardOn</span>
+<span>- toSingleton</span>
+<span>- stopOn</span>
+<span>- withChild</span>
+<span>- onError</span>
+<span>- onCompletion</span>
+<span>- completeWithError</span>
+<span>- stopWhen</span>
+<span>- etc.</span>
+</div>
+</div>
+</div>
 
 ---
 
