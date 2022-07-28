@@ -3,7 +3,6 @@
 theme: seriph
 # random image from a curated Unsplash collection by Anthony
 # like them? see https://unsplash.com/collections/94734566/slidev
-background: https://source.unsplash.com/collection/94734566/1920x1080
 # apply any windi css classes to the current slide
 class: 'text-center'
 # https://sli.dev/custom/highlighters.html
@@ -23,13 +22,15 @@ css: unocss
 
 # Structured Concurrency
 
-<!-- <qrCode text="https://skoppe.github.io/dconf-2022/"/> -->
 
 ---
-class: 'text-center'
+class: flex flex-col
 ---
 
 # All views expressed herein are my own
+https://skoppe.github.io/dconf-2022/
+
+<img src="/qr-skoppe-github-i.svg" class="m-auto w-1/4 rounded-2xl">
 
 ---
 
