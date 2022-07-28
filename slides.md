@@ -9,7 +9,7 @@ class: 'text-center'
 # https://sli.dev/custom/highlighters.html
 highlighter: shiki
 # show line numbers in code blocks
-lineNumbers: false
+lineNumbers: true
 # some information about the slides, markdown enabled
 info: |
   Structured Concurrency in D
@@ -276,6 +276,16 @@ class: 'flex flex-col h-full'
 
 <img src='https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/flow-matic-1.svg' class="h-full">
 
+<!--
+
+Just 17 lines of some ancient code.
+
+But look at the goto's.
+
+Lets follow them.
+
+-->
+
 ---
 class: 'flex flex-col h-full'
 ---
@@ -285,6 +295,12 @@ class: 'flex flex-col h-full'
 
 <img src='https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/flow-matic-2.svg' class="h-full">
 
+<!---
+
+There are more!
+
+-->
+
 ---
 class: 'flex flex-col h-full'
 ---
@@ -293,6 +309,20 @@ class: 'flex flex-col h-full'
 <i>from https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/</i>
 
 <img src='https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/flow-matic-4.svg' class="h-full">
+
+<!--
+
+This is just 17 lines, but it is already incomprehensible.
+
+Imagine having to refactor this, debug this, or add some feature.
+
+It is madness.
+
+You could argue it is *just* 17 lines, so it isn't completely impenetrable. However, that is the problem, its only 17 lines, and it is already this complex.
+
+Imagine it was 5000 lines.
+
+-->
 
 ---
 
@@ -309,9 +339,10 @@ Except from "An introduction to structured programming" by Karl P. Hunt. 1979
 </div>
 
 
-<!-- - started in the 60's when software was becoming bigger and people needed a way to deal with the complexity
+<!--
 
-This quote is actually very late. Structured programming started much earlier but there was quite some debate and back-and-forth
+The demand for software grew so big that unstructured programming was causing problems with software reliability. And it was only set to grow more.
+
 -->
 
 
@@ -361,14 +392,15 @@ Condition --> [*]
 <!---
 - uses 3 construct to deals with any programming problem: sequence, selection and iteration
 
-The important part here is the single entry and single exit
+- sequence we know as the top-down execution of statements
+- selection is just our if-statement
+- and iteration are our loops
 
-TODO: rephrase
-Looking at a sequence of regular instructions (i.e., without loops or alternatives) is easy. The preconditions of an instruction directly depend on the postconditions of the previous instruction. This is what Dijkstra calls enumerative reasoning. The conceptual gap between a sequence of instructions and the execution of those instructions in time is minimal.
+Any computable function can be written using just these 3 constructs.
 
-If we want to treat code blocks or function calls as instructions, we should ensure that they share as many properties as possible with the simple instructions. One of these properties is single entry, single exit point. Every instruction, every block of code and every function should have one single entry point so that we can easily check whether the preconditions are met. Similarly, they should have one single exit point so that we analyse a single set of postconditions.
+One important aspect here is the single entry and single exit
 
-There is another advantage of using a single entry, single exit point strategy. The blocks and the function calls have the same shape as simple instructions. That allows us to apply the same type of reasoning to code blocks and to function calls, and permits us to have a simpler recursive decomposition.
+And these things compose:
 -->
 
 ---
@@ -431,26 +463,24 @@ S5 --> [*]
 4. code blocks should have one entry and one exit point
 5. soundness and completeness: all programs can be safely written in a style that enables structured programming
 
+
+
+TODO: rephrase
+Looking at a sequence of regular instructions (i.e., without loops or alternatives) is easy. The preconditions of an instruction directly depend on the postconditions of the previous instruction. This is what Dijkstra calls enumerative reasoning. The conceptual gap between a sequence of instructions and the execution of those instructions in time is minimal.
+
+If we want to treat code blocks or function calls as instructions, we should ensure that they share as many properties as possible with the simple instructions. One of these properties is single entry, single exit point. Every instruction, every block of code and every function should have one single entry point so that we can easily check whether the preconditions are met. Similarly, they should have one single exit point so that we analyse a single set of postconditions.
+
+There is another advantage of using a single entry, single exit point strategy. The blocks and the function calls have the same shape as simple instructions. That allows us to apply the same type of reasoning to code blocks and to function calls, and permits us to have a simpler recursive decomposition.
+
+<->
+
+A lot of people were against
+
 -->
 
 ---
 
 # Structured Programming
-
-<!--
-
-- after some initial opposition, eventually everyone agreed it was better overall
-- it is hard to find an unstructured programming language
-- maybe we have become so accustomed to it that we are blind to unstructured programming
-
-- The hierachy of modules
-each module controls those immediately below it. To say a module controls another means that it initiates the action of the other, and that the other module returns control to the first when it is finished.
-
-Top-down we have decomposition, bottom-up we have composition. With that we have a structured way to chop up problems into smaller ones, or compose solutions out of smaller ones.
-
-Composition allows to compose code. We don't have composition with concurrency. We can write a function that retries another function max n times. A for loop, a counter, error handling, and forwarding the error when its retried too often. But doing this with an concurrent function requires a lot of DIY. This is because there is no standard way to call a concurrent function, so we have no way to compose them. This means there are no async algorithms readily available, so people code what they need, with all the bugs that that ensues.
--->
-
 
 <div class="shadow bg-gray-100 p-4 m-4 dark:bg-gray-700">
 <mdi-format-quote-open />
@@ -473,6 +503,23 @@ Except from "An introduction to structured programming" by Karl P. Hunt. 1979
 
 <!--
 
+This quote is actually very late. Structured programming started much earlier but there was quite some debate and back-and-forth
+
+- after some initial opposition, eventually everyone agreed it was better overall
+- it is hard to find an unstructured programming language
+- maybe we have become so accustomed to it that we are blind to unstructured programming
+
+- The hierachy of modules
+each module controls those immediately below it. To say a module controls another means that it initiates the action of the other, and that the other module returns control to the first when it is finished.
+
+Top-down we have decomposition, bottom-up we have composition. With that we have a structured way to chop up problems into smaller ones, or compose solutions out of smaller ones.
+
+Composition allows to compose code. We don't have composition with concurrency. We can write a function that retries another function max n times. A for loop, a counter, error handling, and forwarding the error when its retried too often. But doing this with an concurrent function requires a lot of DIY. This is because there is no standard way to call a concurrent function, so we have no way to compose them. This means there are no async algorithms readily available, so people code what they need, with all the bugs that that ensues.
+-->
+
+
+<!--
+
 Lets examine what happens if we apply the principles of structured programming to concurrency.
 
 But before that, lets look at the cornerstone of concurrency: the asynchronous function.
@@ -485,9 +532,9 @@ But before that, lets look at the cornerstone of concurrency: the asynchronous f
 
 |   | **regular functions** | **asynchronous function** |
 |---|----------------|-----------------------|
-| parameters        | <mdi-check-bold class="text-green-600"/> | <mdi-check-bold class="text-green-600"/>     |
+| arguments | <mdi-check-bold class="text-green-600"/> | <mdi-check-bold class="text-green-600"/>     |
 | return value      | <mdi-check-bold class="text-green-600"/> | <mdi-check-bold class="text-green-600"/>   |
-| exception         | <mdi-check-bold class="text-green-600"/> | <mdi-check-bold class="text-green-600"/>      |
+| throw exception   | <mdi-check-bold class="text-green-600"/> | <mdi-check-bold class="text-green-600"/>      |
 | execution         | inline | runs *somewhere* else |
 | cancellable       | <mdi-close class="text-red-600"/> | <mdi-check-bold class="text-green-600"/>         |
 | owner             | caller           | <mdi-help class="text-yellow-600"/> |
@@ -500,6 +547,13 @@ Fire and forget...
 
 <img src="/asynchrony.svg"/>
 <!--
+
+An asynchronous function is a lot like fire-and-forget. And as such it leaves the world of structured programming.
+
+This means a lot of guarantees of structured programming are abandoned as well, and all the responsibilities of said async function fall on the programmer.
+
+//TODO: old
+
 Well, it is a function, but its asynchronous. What does that mean, for a function to be asynchronous.
 
 Let us first look at a function. It has input, output, maybe it can throw an exception. Async functions need to do all that too, plus they have to be asynchronous.
@@ -520,8 +574,8 @@ Ownership and lifetime
 
 <div class="flex flex-row">
 <div class="w-1/2">
-- Every async function needs to have a owner<br>
-- An owner needs to outlive all the async functions it owns
+- Every async computation needs to have a owner<br>
+- An owner needs to outlive all the async computations it owns
 
 </div>
 <div class="w-1/2">
@@ -534,6 +588,18 @@ from https://blog.softwaremill.com/structured-concurrency-and-pure-functions-92d
 </div>
 
 <!--
+
+That is not good. We want to stay in the world of structured programming, because it gives so many nice guarantees and allows us to write large scale reliable software.
+
+"Every async function needs to have an owner"
+"An owner needs to outlive all the async functions it owns"
+
+This is just like regular programming. When you call a function, that function has to complete before the caller can.
+
+We need to shift our mindset a bit and ask ourselves the question: "who is the owner?".
+
+
+
 
 Just like with structured programming, one entry, one exit, all encapsulated in one block
 
@@ -552,9 +618,16 @@ Error handling and cancellation
 
 <div class="flex flex-row">
 <div class="w-1/2">
-Because there is always an owner:<br>
-- there is always a place to forward errors to<br>
-- cancellation naturally flows from the owner to the async function.
+Because there is always an owner there is always a place to forward errors to<br>
+
+Just like exception bubble up the callstack, we want a similar bubbling upwards.
+
+This avoids ignored exceptions.
+
+If an asynchronous computations errors, the owner still has to wait for any other asynchronous computations it might have started. The natural conclusion is that it needs a way to cancel asynchronous computations.
+
+That way in the presence of errors, it can cancel any outstanding work, before completing with an error itself.
+
 </div>
 
 <div class="w-1/2">
@@ -572,16 +645,37 @@ Just like with structured programming, one entry, one exit, all encapsulated in 
 
 This means we need to set the continuation before we start the async work.
 
-- An error in an async functions must naturally bubble up to its owner
+- An error in an async computation must naturally bubble up to its owner
 
 
 It allows control flow to remain readily evident by the structure of the source code despite the presence of concurrency.
 -->
 
-
 ---
 
-# C++'s P2300
+# Structured Concurrency
+To Recap
+
+1) every asynchronous computation must have an owner
+2) owners must outlive everything they own
+3) errors must be propagated upwards the chain of owners
+4) asynchronous computations should support cancellation
+<br>
+<br>
+<div v-click>
+Asynchronous computations need a way to:
+<br>
+<br>
+
+1) signal normal completion (return value)
+2) signal error (throw exception)
+3) signal completed cancellation
+
+And owners need a way to signal cancellation.
+</div>
+---
+
+# C++'s P2300 Proposal
 std::execution
 
 <dl>
@@ -615,13 +709,13 @@ I implemented it roughly verbatim in D.
 
 ---
 
-# C++'s P2300
+# C++'s P2300 Proposal
 
 <div class="shadow bg-gray-100 p-4 m-4 dark:bg-gray-700">
 <mdi-format-quote-open />
-Today, C++ software is increasingly asynchronous and parallel, a trend that is likely to only continue going forward. Asynchrony and parallelism appears everywhere, from processor hardware interfaces, to networking, to file I/O, to GUIs, to accelerators. Every C++ domain and every platform needs to deal with asynchrony and parallelism, from scientific computing to video games to financial services, from the smallest mobile devices to your laptop to GPUs in the world’s fastest supercomputer.
+Today, C++ software is increasingly asynchronous and parallel, a trend that is likely to only continue going forward. Asynchrony and parallelism appears everywhere, from processor hardware interfaces, to networking, to file I/O, to GUIs, to accelerators. [...]
 
-While the C++ Standard Library has a rich set of concurrency primitives (std::atomic, std::mutex, std::counting_semaphore, etc) and lower level building blocks (std::thread, etc), **we lack a Standard vocabulary and framework for asynchrony and parallelism** that C++ programmers desperately need. std::async/std::future/std::promise, C++11’s intended exposure for asynchrony, is inefficient, hard to use correctly, and severely lacking in genericity, making it unusable in many contexts. We introduced parallel algorithms to the C++ Standard Library in C++17, and while they are an excellent start, they are all inherently synchronous and not composable.
+While the C++ Standard Library has a rich set of concurrency primitives (std::atomic, std::mutex, std::counting_semaphore, etc) and lower level building blocks (std::thread, etc), **we lack a Standard vocabulary and framework for asynchrony and parallelism** that C++ programmers desperately need. std::async/std::future/std::promise, C++11’s intended exposure for asynchrony, is inefficient, hard to use correctly, and severely lacking in genericity, making it unusable in many contexts. [...]
 
 This paper proposes a Standard C++ model for asynchrony, based around three key abstractions: **schedulers, senders, and receivers**, and a set of **customizable asynchronous algorithms**.<mdi-format-quote-close />
 </div>
@@ -639,21 +733,21 @@ I won't go into much detail on how sender/receivers work, but we will discuss so
 # Sender/Receivers
 A basic sender
 
-```d
+```d {all|2,4,17|12-16|5-11}
 /// A Sender that sends a single value of type T
 struct ValueSender(T) {
   alias Value = T;
   T value;
-  static struct Op(Receiver) {
+  static struct OperationalState(Receiver) {
     Receiver receiver;
     T value;
     void start() @safe nothrow {
-      receiver.setValue(value);
+      receiver.setValue(value); // <-- complete with a return value
     }
   }
   auto connect(Receiver)(return Receiver receiver) @safe scope return {
     // ensure NVRO
-    auto op = Op!(Receiver)(receiver, value);
+    auto op = OperationalState!(Receiver)(receiver, value);
     return op;
   }
 }
@@ -668,10 +762,17 @@ symmetryinvestments/concurrency
 </div>
 <!--
 
+Senders/Receivers
+
+A Sender roughly corresponds to the asynchronous computation we talked about earlier. It *sends* something. Either a value, error or that it has been cancelled.
+
+A Receiver correspondingly receives either the value, the error or the cancellation.
+
 A ValueSender just sends one value.
 
 As you can see the 'Sender' here is just a struct with a single value. It takes up no more space than the value itself. It requires no allocations. 
 
+There is a `connect` that returns something called OperationalState - which here just holds the value and the receiver. Then there is the `start` function on the OperationalState that kicks it off.
 -->
 
 ---
@@ -679,15 +780,82 @@ As you can see the 'Sender' here is just a struct with a single value. It takes 
 # Sender/Receivers
 Use syncWait to start and await the Sender
 
+<div class="flex">
+<div class="w-1/2">
 ```d
 auto just(T t) @safe {
   return ValueSender!T(t);
 }
 
-void main() {
-  just(42).syncWait();
+void main() @safe {
+  auto w = just(42).syncWait();
+  assert(w.value == 42);
 }
 ```
+</div>
+
+<div class="w-1/2">
+```mermaid
+sequenceDiagram
+    syncWait->>just(42): `connect`
+    just(42)->>OperationalState: construct
+    OperationalState->>syncWait: return
+    syncWait->>OperationalState: `start`
+    OperationalState->>syncWait: `setValue`
+```
+</div>
+</div>
+
+<!--
+
+Here we have a little `just` helper function.
+
+and we call `syncWait` on the resulting sender.
+
+lo and behold the value is 42.
+
+What `syncWait` does, is call connect on the Sender, passing in a Receiver, and calling start on the resulting OperationalState.
+
+The important thing to note here, is that syncWait both starts the Sender and awaits it. This way the begin and end of an asynchronous computation are in one place.
+
+-->
+
+---
+
+# Senders/Receives
+Schedulers
+
+```d
+void main() @safe {
+    auto pool = stdTaskPool(1);
+
+    auto w = just(42)
+        .on(pool.getScheduler)
+        .syncWait();
+
+    assert(w.value == 42);
+}
+
+```
+
+---
+
+# Senders/Receives
+Chaining
+
+```d
+void main() @safe {
+    auto pool = stdTaskPool(1);
+
+    auto w = just(42)
+        .on(pool.getScheduler)
+        .then((int i) => i * 2)
+        .syncWait();
+
+    assert(w.value == 84);
+}
+```
+
 
 ---
 
@@ -775,22 +943,24 @@ $O(n + m)$ vs $O(n \times m)$
 
 ```mermaid
    stateDiagram-v2
-     sender1 --> Operations
-     sender2 --> Operations
-     sender3 --> Operations
-     sender4 --> Operations
-     sender5 --> Operations
-     Operations : Operations
+     IO --> SR
+     Timers --> SR
+     DBs --> SR
+     HTTP --> SR
+     E1 --> SR
+     SR : Senders/Receivers
+     E1 : etc.
+     E2 : etc.
 
-     Operations --> sender6
-     Operations --> sender7
-     Operations --> sender8
-     Operations --> sender9
-     Operations --> sender10
+     SR --> whenAll
+     SR --> race
+     SR --> then
+     SR --> retry
+     SR --> E2
 
 ```
 </div>
-<div class="w-1/2">
+<div class="w-1/2 pl-4">
 Operations:<br>
 <br>
 <div class="grid grid-cols-2">
@@ -820,15 +990,138 @@ Operations:<br>
 
 ---
 
-# Narrow Waist
+# What about promise?
 
 ---
 
-# BYOA
+# Senders/Receivers
+Threadpools
+
+```d
+auto someSender() { /* ... */ }
+auto anotherSender() { /* ... */ }
+
+auto fun() {
+    auto pool = stdTaskPool(2);
+
+    auto s1 = someSender().on(pool.getScheduler);
+    auto s2 = anotherSender().on(pool.getScheduler);
+
+    whenAll(s1, s2).syncWait;
+}
+```
+
+<div v-click>
+```d
+auto fun() {
+    auto pool = stdTaskPool(2);
+
+    auto s1 = someSender().on(pool.getScheduler);
+
+    return s1; // Error: scope variable `s1` may not be returned
+}
+```
+</div>
+
+---
+
+# Shared
+
+Over time I have started to appreciate `shared`.
+
+I remember a time almost a decade ago when I really disliked `shared`. That was mostly because I couldn't get it to work.
+
+- In the concurrency library all continuations are `shared delegate`'s
+- Why isn't the delegate passed to core.Thread a `shared delegate`?
+- If there are a lot of `cast(shared)` and `cast()` then you are doing it wrong.
+
+---
+
+# Shared
+MPSC queue example
+
+<div class="flex">
+<div class="w-1/2 pr-4">
+The queue itself is non-shared:
+```d
+final class MPSCQueue(Node) {
+    // [...]
+
+    @safe nothrow @nogc shared
+    bool push(Node* n) { */ ... */ }
+
+    @safe nothrow @nogc 
+    Node* pop() { /* ... */ }
+
+    alias Producer = shared(MPSCQueueProducer!Node);
+
+    @trusted nothrow @nogc 
+    Producer producer() {
+      return Producer(cast(shared)this);
+    }
+
+    // [...]
+}
+```
+</div>
+<div class="w-1/2">
+But the producer is shared:
+```d
+struct MPSCQueueProducer(Node) {
+    private shared MPSCQueue!(Node)  q;
+
+    @safe nothrow @nogc shared
+    void push(Node* node) {
+        q.push(node);
+    }
+}
+```
+</div>
+</div>
 
 ---
 
 # Streams
+
+A Stream has a `.collect` function that accepts a `shared` callable and returns a Sender. Once the Sender is connected and started the Stream will call the callable zero or more times before one of the three terminal functions of the Receiver is called.
+
+An exception throw in the callable will cancel the stream and complete the Sender with that exception.
+
+Streams can be cancelled by triggering the StopToken supplied via the Receiver.
+
+The callable supplied to the Stream has to annotated with `shared` because the execution context where the callable is called from is undefined.
+
+Currently there are the following Streams:
+
+- `infiniteStream`. Continously emits the same value.
+- `iotaStream`. Emits the values that span the given starting and stopping values.
+- `arrayStream`. Emits every value from the array.
+- `intervalStream`. Emits every interval.
+- `doneStream`. Upon start immediately emits cancellation.
+- `errorStream`. Upon start immediately emits an error.
+- `sharedStream`. Is used for broadcasting values to zero or more receivers. Receivers can be added and removed at any time.
+- `cycleStream`. Cycles through a ranges until cancelled.
+
+With the following operations:
+
+- `take`. Emits at most the first n values.
+- `transform`. Applies a tranformation function to each value.
+- `filter`. Filters out all values where predicate is false.
+- `scan`. Applies an accumulator function with seed to each value.
+- `sample`. Forwards the latest value of the base Stream every time the trigger Stream emits a value. If the base stream hasn't produced a (new) value the trigger is ignored.
+- `via`. Starts the Stream on the context of another Sender.
+- `throttleFirst`. Limits a Stream by starting a cooldown period after each value during which no newer values are emitted.
+- `throttleLast`. Like `throttleFirst` but only emits the latest value after the cooldown.
+- `debounce`. Limits a Stream by only emitting the last value after the Stream has not emitted for a duration.
+- `slide`. Slides a window over the stream and emits each full window as an array.
+- `toList`. Converts the Stream into a Sender that completes with an array that contains all the items emitted. Be careful to use this on finite streams only.
+- `flatMapConcat`. For each value runs the supplied function and starts the returned `Sender`. The inner `Sender` must be completed before another is started.
+- `flatMapLatest`. For each value runs the supplied function and starts the returned `Sender`. A `Sender` that is still running when the next value arrives is cancelled.
+
+---
+
+
+<Tweet id="1017090215788204032" />
 
 ---
 
@@ -838,363 +1131,6 @@ Operations:<br>
 
 # Future
 
----
-
-# Welcome to Slidev
-
-Presentation slides for developers
-
-<div class="pt-12">
-  <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
-    Press Space for next page <carbon:arrow-right class="inline"/>
-  </span>
-</div>
-
-<div class="abs-br m-6 flex gap-2">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="text-xl icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" alt="GitHub"
-    class="text-xl icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon-logo-github />
-  </a>
-</div>
-
-<!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
-
----
-
-# What is Slidev?
-
-Slidev is a slides maker and presenter designed for developers, consist of the following features
-
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - theme can be shared and used with npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embedding Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export into PDF, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - anything possible on a webpage
-
-<br>
-<br>
-
-Read more about [Why Slidev?](https://sli.dev/guide/why)
-
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/guide/syntax#embedded-styles
--->
-
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-}
-</style>
-
----
-
-# Navigation
-
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/navigation.html)
-
-### Keyboard Shortcuts
-
-|     |     |
-| --- | --- |
-| <kbd>right</kbd> / <kbd>space</kbd>| next animation or slide |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd> | previous slide |
-| <kbd>down</kbd> | next slide |
-
-<!-- https://sli.dev/guide/animations.html#click-animations -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
-
----
-layout: image-right
-image: https://source.unsplash.com/collection/94734566/1920x1080
----
-
-# Code
-
-Use code snippets and get the highlighting directly![^1]
-
-```ts {all|2|1-6|9|all}
-interface User {
-  id: number
-  firstName: string
-  lastName: string
-  role: string
-}
-
-function updateUser(id: number, update: User) {
-  const user = getUser(id)
-  const newUser = { ...user, ...update }
-  saveUser(id, newUser)
-}
-```
-
-<arrow v-click="3" x1="400" y1="420" x2="230" y2="330" color="#564" width="3" arrowSize="1" />
-
-[^1]: [Learn More](https://sli.dev/guide/syntax.html#line-highlighting)
-
-<style>
-.footnotes-sep {
-  @apply mt-20 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
-
----
-
-# Components
-
-<div grid="~ cols-2 gap-4">
-<div>
-
-You can use Vue components directly inside your slides.
-
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
-
-```html
-<Counter :count="10" />
-```
-
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
-
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
-
-</div>
-<div>
-
-```html
-<Tweet id="1390115482657726468" />
-```
-
-<Tweet id="1390115482657726468" scale="0.65" />
-
-</div>
-</div>
-
-
----
-class: px-20
----
-
-# Themes
-
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
-
-<div grid="~ cols-2 gap-2" m="-t-2">
-
-```yaml
----
-theme: default
----
-```
-
-```yaml
----
-theme: seriph
----
-```
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true">
-
-</div>
-
-Read more about [How to use a theme](https://sli.dev/themes/use.html) and
-check out the [Awesome Themes Gallery](https://sli.dev/themes/gallery.html).
-
----
-preload: false
----
-
-# Animations
-
-Animations are powered by [@vueuse/motion](https://motion.vueuse.org/).
-
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }">
-  Slidev
-</div>
-```
-
-<div class="w-60 relative mt-6">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-square.png"
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-circle.png"
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-triangle.png"
-    />
-  </div>
-
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
-</div>
-
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
-</script>
-
-<div
-  v-motion
-  :initial="{ x:35, y: 40, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
-
-[Learn More](https://sli.dev/guide/animations.html#motion)
-
-</div>
-
----
-
-# LaTeX
-
-LaTeX is supported out-of-box powered by [KaTeX](https://katex.org/).
-
-<br>
-
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$
-\begin{array}{c}
-
-\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} &
-= \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} & = 4 \pi \rho \\
-
-\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t} & = \vec{\mathbf{0}} \\
-
-\nabla \cdot \vec{\mathbf{B}} & = 0
-
-\end{array}
-$$
-
-<br>
-
-[Learn more](https://sli.dev/guide/syntax#latex)
-
----
-
-# Diagrams
-
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
-
-<div class="grid grid-cols-3 gap-10 pt-4 -mb-6">
-
-```mermaid {scale: 0.5}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
-
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-```
-
-```plantuml {scale: 0.7}
-@startuml
-
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
-
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
-
-cloud {
-  [Example 1]
-}
-
-
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
-
-
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
-
-@enduml
-```
-
-</div>
-
-[Learn More](https://sli.dev/guide/syntax.html#diagrams)
-
-
----
-layout: center
-class: text-center
 ---
 
 # Learn More
