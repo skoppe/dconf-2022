@@ -1174,11 +1174,18 @@ With the following operations:
 
 ---
 
+# Fibers
+
+Some people don't quite like having to write a sender, or to nest things. For them there is the fiber escape hatch. We can integrate with Fibers so that fibers can await an Sender by simply yielding, and conversely to turn a Fiber into a Sender.
+
+---
+
 # No-sync / no-lock task graphs
 
 ---
 
 # Future
+
 
 ---
 
