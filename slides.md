@@ -191,6 +191,24 @@ void gun() {
 </div>
 </div>
 
+<!--
+
+These are some of the usual suspects in D.
+
+All of them have a similar api like here on the right.
+
+You spawn something, and then later join it.
+
+I tried mecca and ocean as well, but couldn't get them to compile.
+
+There is just one problem. I am going to go to the next slide, and only two words are going to change here on the right.
+
+I hope that can illustrate the problem a bit.
+
+Ready?
+
+-->
+
 ---
 
 # Concurrency in D
@@ -225,23 +243,23 @@ void gun() {
 <!--
 How does that make you feel?
 
-We have unknowingly been using an API similar to the one we use in Manaul Memory Management.
+Many of the concurrency API's we use are very similar to Manual Memory Managentment.
 
 What is actually the problem with new and delete?
 
 "you forget the delete."
 
-Well that is more a symptom. The problem is that with Manual Memory Management is the fact we split up the resource into two pieces , put one here, and the other there, with nothing but an invisible link between them, that you can only see if you analyse the code inbetween.
+Well that is more a symptom. The problem with Manual Memory Management is the fact that it splits up the resource management into two pieces, one we put here, and the other there.
 
-Looking at each one in isolation gives you no insight into the other.
+You could be lucky and it might be in the same function, or maybe in the same file. But it might be only in the same folder, or worse, in some other one.
 
-In order to know *where* to put the delete, you have to understand a lot more than the surroundings of whereever you end up putting it. You need to examine everything from new to delete.
+Between them there is only this invisible link, which you can only see if you analyse the code in between.
 
-The problem isn't that you forget the delete, the problem is that it isn't clear where to put it. And even if you put it somewhere, it isn't clear that its correct.
+So the problem isn't that you forget the delete, the problem is that it isn't clear where to put it. You'll have to understand a lot more than the surroundings of where ever you end up putting it. You need to examine everything from new to delete.
 
-With concurrency we have a similar problem, that we end up splitting the spawn and the join, requiring non-local context to reason about the whole thing.
+And when you did the hard work and concluded that it *has* to go at a specific spot in the code, there is almost nothing you can do to make your understanding clear to anyone else, including youself.
 
-The problem is that it doesn't scale. The moment your software gets larger there is too much to remain aware of.
+With concurrency we have a similar problem, that we end up splitting the spawn and the join, creating similar hidden links between them. This ultimately doesn't scale and makes reasoning about it very hard.
 
 -->
 ---
@@ -266,6 +284,9 @@ cancellation is left as an "exercise for the reader"
 nothing about it is composable  
 
 It actually resembles unstructured programming a lot.
+
+Lets go back a bit in time and see how that played out.
+
 -->
 
 ---
@@ -323,6 +344,8 @@ You could argue it is *just* 17 lines, so it isn't completely impenetrable. Howe
 
 Imagine it was 5000 lines.
 
+This was exactly the problem a couple decades ago.
+
 -->
 
 ---
@@ -339,13 +362,11 @@ Except from "An introduction to structured programming" by Karl P. Hunt. 1979
 </span>
 </div>
 
-
 <!--
 
 The demand for software grew so big that unstructured programming was causing problems with software reliability. And it was only set to grow more.
 
 -->
-
 
 ---
 
@@ -390,18 +411,22 @@ Condition --> [*]
 </div>
 
 
-<!---
-- uses 3 construct to deals with any programming problem: sequence, selection and iteration
+<!--
+
+The answer to that was structured programming.
+
+In 1966 Böhm and Jacopini wrote the Structured Program Theorem that proved that any computable function can be written using just these 3 constructs depicted here.
+
+sequence, selection and iteration
 
 - sequence we know as the top-down execution of statements
 - selection is just our if-statement
-- and iteration are our loops
+- and iteration are our for and while loops
 
-Any computable function can be written using just these 3 constructs.
-
-One important aspect here is the single entry and single exit
+One important aspect here is the single entry and single exit. There is no funny business, once you enter a block, you know where you exit.
 
 And these things compose:
+
 -->
 
 ---
@@ -458,6 +483,19 @@ S5 --> [*]
 
 <!--
 
+Here is an example of how you can compose these blocks into larger blocks.
+
+Note that every block here can be abstracted away as just a stateument. This allows us to encaptulate and abstract details, which means that done well, we can reason locally, which ultimately allows us to built large scale software.
+
+This creates what dijkstra called a "hierachy of modules". The modules here refer to something we now understand as a function.
+
+You can zoom out and replace detailed things with abstractions, and zoom in giving rise to greater detail. However, when zooming in, you only need to focus on that small local bit. This gives rise to local reasoning.
+
+Hence software is easier to write, since problems can be decomposed into sub-problems, and better to understand, because you dont need to know everything to understand a small part.
+
+
+TODO: talk a bit about abstractions as building blocks of code
+
 1. use of abstractions as building blocks (both in code and data)
 2. recursive decomposition of the program as a method of creation/analysis of a program
 3. local reasoning helps understandability, and scope nesting is a good way of achieving local reasoning
@@ -474,8 +512,6 @@ If we want to treat code blocks or function calls as instructions, we should ens
 There is another advantage of using a single entry, single exit point strategy. The blocks and the function calls have the same shape as simple instructions. That allows us to apply the same type of reasoning to code blocks and to function calls, and permits us to have a simpler recursive decomposition.
 
 <->
-
-A lot of people were against
 
 -->
 
@@ -504,11 +540,13 @@ Except from "An introduction to structured programming" by Karl P. Hunt. 1979
 
 <!--
 
-This quote is actually very late. Structured programming started much earlier but there was quite some debate and back-and-forth
+This quote is actually very late. Structured programming started much earlier but it certainly took its time before it was widespread adopted.
 
-- after some initial opposition, eventually everyone agreed it was better overall
-- it is hard to find an unstructured programming language
-- maybe we have become so accustomed to it that we are blind to unstructured programming
+A lot of people were against it.
+
+When doing research I remember reading an anecdote between proponents of both unstructured and structured programming. Essentially the "unstructured people" were coming up with challenges, saying "Hey, see if you can structure this!", and throw awful unstructured code to them. But of course it could be done.
+
+<>
 
 - The hierachy of modules
 each module controls those immediately below it. To say a module controls another means that it initiates the action of the other, and that the other module returns control to the first when it is finished.
@@ -541,6 +579,16 @@ But before that, lets look at the cornerstone of concurrency: the asynchronous f
 | owner             | caller           | <mdi-help class="text-yellow-600"/> |
 | lifetime          | less than caller      | <mdi-help class="text-yellow-600"/> |
 
+<!--
+
+The asynchronous function has to do everything a regular function does. But it has to be "asynchronous" as well. Which is depicted here as "runs *somewhere* else". Somewhere else can be a lot of things. It might run on a separate execution context, a separate thread, on the same thread (just later in time), on the gpu, on a remote server, etc.
+
+It has one thing the regular function doesn't, which is cancellation. This is a consequence of it running *somewhere else*.
+
+Another consequence however, is that because it runs outside of the stack, many of guarantees of structured programming are abandoned as well, and all the responsibilities fall on the programmer.
+
+-->
+
 ---
 
 # Asynchronous Functions
@@ -551,7 +599,7 @@ Fire and forget...
 
 An asynchronous function is a lot like fire-and-forget. And as such it leaves the world of structured programming.
 
-This means a lot of guarantees of structured programming are abandoned as well, and all the responsibilities of said async function fall on the programmer.
+This means a lot 
 
 //TODO: old
 
