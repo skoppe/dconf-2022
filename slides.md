@@ -354,8 +354,8 @@ This was exactly the problem a couple decades ago.
 
 <div class="shadow bg-gray-100 p-4 m-4 dark:bg-gray-700">
 <mdi-format-quote-open />
-[...] many people working in the area of computing have expressed concern with the problem of software reliability.
-While the cost of hardware has decreased as power has increased, software costs have increased and become more complex. The result is that, although we can do more than before, it is at the risk of encountering more serious problems than before, and the problems usually prove to be more resistant to solution. In response to this situation, several approaches to programming have been devised to make programs more reliable and, at the same time, boost the amount of relatively bug-free code a programmer can produce.
+[...] many people working in the area of computing <b>have expressed concern with the problem of software reliability</b>.
+While the cost of hardware has decreased as power has increased, <b>software costs have increased and become more complex</b>. The result is that, although we can do more than before, it is at the risk of encountering more serious problems than before, and the problems usually prove to be more resistant to solution. In response to this situation, several approaches to programming have been devised to make programs more reliable and, at the same time, boost the amount of relatively bug-free code a programmer can produce.
 <mdi-format-quote-close />
 <span class="block text-right mt-4">
 Except from "An introduction to structured programming" by Karl P. Hunt. 1979
@@ -521,17 +521,17 @@ There is another advantage of using a single entry, single exit point strategy. 
 
 <div class="shadow bg-gray-100 p-4 m-4 dark:bg-gray-700">
 <mdi-format-quote-open />
-The ability to check each module independently is
+The ability to <b>check each module independently</b> is
 an obvious advantage of SP. In general, the clarity and
 systematic nature of the lines of control and the
 independence of the modules are responsible for
 the superiority of SP over a more unorganized approach.
 It is much easier to tell when a module is being
-performed in a structured program, as there is only one
-way of getting into it and only one way of getting out,
-and both the entry and exit connect to the same higher
-level module. Thus, the logic is more easily followed
-both within and between modules
+performed in a structured program, <b>as there is only one
+way of getting into it and only one way of getting out</b>,
+and both the entry and exit connect to the <b>same higher
+level module</b>. Thus, <b>the logic is more easily followed
+both within and between modules</b>.
 <mdi-format-quote-close />
 <span class="block text-right mt-4">
 Except from "An introduction to structured programming" by Karl P. Hunt. 1979
@@ -546,6 +546,10 @@ A lot of people were against it.
 
 When doing research I remember reading an anecdote between proponents of both unstructured and structured programming. Essentially the "unstructured people" were coming up with challenges, saying "Hey, see if you can structure this!", and throw awful unstructured code to them. But of course it could be done.
 
+And today structured programming has become the norm. There aren't many unstructured programming languages around.
+
+Structured programming is what we do all day every day.
+
 <>
 
 - The hierachy of modules
@@ -554,10 +558,7 @@ each module controls those immediately below it. To say a module controls anothe
 Top-down we have decomposition, bottom-up we have composition. With that we have a structured way to chop up problems into smaller ones, or compose solutions out of smaller ones.
 
 Composition allows to compose code. We don't have composition with concurrency. We can write a function that retries another function max n times. A for loop, a counter, error handling, and forwarding the error when its retried too often. But doing this with an concurrent function requires a lot of DIY. This is because there is no standard way to call a concurrent function, so we have no way to compose them. This means there are no async algorithms readily available, so people code what they need, with all the bugs that that ensues.
--->
 
-
-<!--
 
 Lets examine what happens if we apply the principles of structured programming to concurrency.
 
@@ -583,37 +584,12 @@ But before that, lets look at the cornerstone of concurrency: the asynchronous f
 
 The asynchronous function has to do everything a regular function does. But it has to be "asynchronous" as well. Which is depicted here as "runs *somewhere* else". Somewhere else can be a lot of things. It might run on a separate execution context, a separate thread, on the same thread (just later in time), on the gpu, on a remote server, etc.
 
+Which is the whole reason why we want the async function. We need to do some background work while we continue our program.
+
 It has one thing the regular function doesn't, which is cancellation. This is a consequence of it running *somewhere else*.
 
 Another consequence however, is that because it runs outside of the stack, many of guarantees of structured programming are abandoned as well, and all the responsibilities fall on the programmer.
 
--->
-
----
-
-# Asynchronous Functions
-Fire and forget...
-
-<img src="/asynchrony.svg"/>
-<!--
-
-An asynchronous function is a lot like fire-and-forget. And as such it leaves the world of structured programming.
-
-This means a lot 
-
-//TODO: old
-
-Well, it is a function, but its asynchronous. What does that mean, for a function to be asynchronous.
-
-Let us first look at a function. It has input, output, maybe it can throw an exception. Async functions need to do all that too, plus they have to be asynchronous.
-
-The simplest exlpanation of asynchrony that I can come up with is that the asynchronous function *runs* somewhere else. Not on the calling stack. It might be on another thread, or one the same thread, just not a top of stack frame of the caller.
-
-Basically we want to call a function that can outlive our stack frame.
-
-But this kills pretty much all the lifetime and ownership guarantees we had from structured programming.
-
-Yet this is exactly what we want, we want to run something on a separate or disjoint execution context, which one we don't care much about, as long as the calling function can continue.
 -->
 
 ---
@@ -623,8 +599,9 @@ Ownership and lifetime
 
 <div class="flex flex-row">
 <div class="w-1/2">
-- Every async computation needs to have a owner<br>
-- An owner needs to outlive all the async computations it owns
+<ul><li>Every async computation needs to have a owner</li>
+<li>An owner needs to outlive all the async computations it owns</li>
+</ul>
 
 </div>
 <div class="w-1/2">
@@ -640,10 +617,14 @@ from https://blog.softwaremill.com/structured-concurrency-and-pure-functions-92d
 
 That is not good. We want to stay in the world of structured programming, because it gives so many nice guarantees and allows us to write large scale reliable software.
 
-"Every async function needs to have an owner"
-"An owner needs to outlive all the async functions it owns"
+- "Every async function needs to have an owner" - we can't just run it fire-and-forget style
+- "An owner needs to outlive all the async functions it owns"
 
 This is just like regular programming. When you call a function, that function has to complete before the caller can.
+
+<>
+
+//TODO: what?
 
 We need to shift our mindset a bit and ask ourselves the question: "who is the owner?".
 
@@ -667,15 +648,13 @@ Error handling and cancellation
 
 <div class="flex flex-row">
 <div class="w-1/2">
-Because there is always an owner there is always a place to forward errors to<br>
+<ul>
+<li>Errors in asynchronous computations need to be forwarded to their owner</li>
+<li>An owner needs to be able to cancel any asynchronous computations it owns</li>
+<li>And they needs to be able to signal completion of said cancellation</li>
+</ul>
 
-Just like exception bubble up the callstack, we want a similar bubbling upwards.
 
-This avoids ignored exceptions.
-
-If an asynchronous computations errors, the owner still has to wait for any other asynchronous computations it might have started. The natural conclusion is that it needs a way to cancel asynchronous computations.
-
-That way in the presence of errors, it can cancel any outstanding work, before completing with an error itself.
 
 </div>
 
@@ -690,14 +669,18 @@ from https://blog.softwaremill.com/structured-concurrency-and-pure-functions-92d
 
 <!--
 
-Just like with structured programming, one entry, one exit, all encapsulated in one block
+1. Because there is always an owner there is always a place to forward errors to.
 
-This means we need to set the continuation before we start the async work.
+Just like exception bubble up the callstack, we want a similar bubbling upwards.
 
-- An error in an async computation must naturally bubble up to its owner
+This avoids swallowed exceptions.
 
+2. If an asynchronous computations errors, the owner still has to wait for any other asynchronous computations it might have started. The natural conclusion is that it needs a way to cancel asynchronous computations.
 
-It allows control flow to remain readily evident by the structure of the source code despite the presence of concurrency.
+That way in the presence of errors, it can cancel any outstanding work, before completing with an error itself.
+
+But just because some computation has been cancelled, doesn't mean it is actually done. Since owners need to outlive the async computations, after cancellation - they need to wait until the computations are done. 
+
 -->
 
 ---
@@ -705,23 +688,34 @@ It allows control flow to remain readily evident by the structure of the source 
 # Structured Concurrency
 To Recap
 
-1) every asynchronous computation must have an owner
-2) owners must outlive everything they own
-3) errors must be propagated upwards the chain of owners
-4) asynchronous computations should support cancellation
+<ol>
+<li>every asynchronous computation must have an owner</li>
+<li>owners must outlive everything they own</li>
+<li>errors must be propagated upwards the chain of owners</li>
+<li>asynchronous computations should support cancellation</li>
+</ol>
 <br>
 <br>
-<div v-click>
 Asynchronous computations need a way to:
 <br>
 <br>
 
-1) signal normal completion (return value)
-2) signal error (throw exception)
-3) signal completed cancellation
+<ol>
+<li>signal normal completion (return value)</li>
+<li>signal error (throw exception)</li>
+<li>signal cancellation</li>
+</ol>
 
-And owners need a way to signal cancellation.
-</div>
+<!--
+
+Just like with structured programming, one entry, one exit, all encapsulated in one block
+
+This means we need to set the continuation before we start the async work.
+
+
+It allows control flow to remain readily evident by the structure of the source code despite the presence of concurrency.
+-->
+
 ---
 
 # C++'s P2300 Proposal
@@ -762,7 +756,7 @@ I implemented it roughly verbatim in D.
 
 <div class="shadow bg-gray-100 p-4 m-4 dark:bg-gray-700">
 <mdi-format-quote-open />
-Today, C++ software is increasingly asynchronous and parallel, a trend that is likely to only continue going forward. Asynchrony and parallelism appears everywhere, from processor hardware interfaces, to networking, to file I/O, to GUIs, to accelerators. [...]
+Today, C++ <b>software is increasingly asynchronous and parallel</b>, a trend that is likely to only continue going forward. <b>Asynchrony and parallelism appears everywhere, from processor hardware interfaces, to networking, to file I/O, to GUIs, to accelerators.</b> [...]
 
 While the C++ Standard Library has a rich set of concurrency primitives (std::atomic, std::mutex, std::counting_semaphore, etc) and lower level building blocks (std::thread, etc), **we lack a Standard vocabulary and framework for asynchrony and parallelism** that C++ programmers desperately need. std::async/std::future/std::promise, C++11’s intended exposure for asynchrony, is inefficient, hard to use correctly, and severely lacking in genericity, making it unusable in many contexts. [...]
 
@@ -779,26 +773,26 @@ I won't go into much detail on how sender/receivers work, but we will discuss so
 
 ---
 
-# Sender/Receivers
+# Senders/Receivers
 A basic sender
 
 ```d {all|2,4,17|12-16|5-11}
 /// A Sender that sends a single value of type T
 struct ValueSender(T) {
-  alias Value = T;
-  T value;
-  static struct OperationalState(Receiver) {
-    Receiver receiver;
+    alias Value = T;
     T value;
-    void start() @safe nothrow {
-      receiver.setValue(value); // <-- complete with a return value
+    static struct OperationalState(Receiver) {
+        Receiver receiver;
+        T value;
+        void start() @safe nothrow {
+            receiver.setValue(value); // <-- complete with a return value
+        }
     }
-  }
-  auto connect(Receiver)(return Receiver receiver) @safe scope return {
-    // ensure NVRO
-    auto op = OperationalState!(Receiver)(receiver, value);
-    return op;
-  }
+    auto connect(Receiver)(return Receiver receiver) @safe scope return {
+        // ensure NVRO
+        auto op = OperationalState!(Receiver)(receiver, value);
+        return op;
+    }
 }
 ```
 
@@ -826,19 +820,19 @@ There is a `connect` that returns something called OperationalState - which here
 
 ---
 
-# Sender/Receivers
+# Senders/Receivers
 Use syncWait to start and await the Sender
 
 <div class="flex">
 <div class="w-1/2">
 ```d
 auto just(T t) @safe {
-  return ValueSender!T(t);
+    return ValueSender!T(t);
 }
 
 void main() @safe {
-  auto w = just(42).syncWait();
-  assert(w.value == 42);
+    auto w = just(42).syncWait();
+    assert(w.value == 42);
 }
 ```
 </div>
@@ -865,18 +859,75 @@ lo and behold the value is 42.
 
 What `syncWait` does, is call connect on the Sender, passing in a Receiver, and calling start on the resulting OperationalState.
 
-The important thing to note here, is that syncWait both starts the Sender and awaits it. This way the begin and end of an asynchronous computation are in one place.
+One important thing to note here, is that the Sender, the just(42) is lazy. It doesn't do anything until it is actually connected and started.
 
+This is important since it allows syncWait to both starts it and await it, all in one operation. Unlike the new/delete or the spawn/join which are in different places in the codebase. This way the begin and end of an asynchronous computation are in one place in the code.
+
+It might seem small, but this allows you to reason about the lifetime of a Sender, since it allows the control-flow to be clear by the structure of the source code despite the presence of concurrency.
+
+Then again, you might say, there isn't actually any concurrency here. All this just runs inline on the stack of `main`.
 -->
 
 ---
 
-# Senders/Receives
+# Senders/Receivers
+via another ThreadSender
+
+```d
+auto just(T t) @safe {
+    return ValueSender!T(t);
+}
+
+void main() @safe {
+    auto w = just(42).via(ThreadSender).syncWait();
+    assert(w.value == 42);
+}
+```
+
+<!--
+
+Now it does though.
+
+We composed the just(42) sender to run through the ThreadSender.
+
+The ThreadSender starts up a new thread, and calls the setValue of the receiver. Which, is going to start the just(42) sender. Effectively this means the just(42) sender runs on a separate thread.
+
+-->
+---
+
+# Senders/Receivers
+via another ThreadSender
+
+<div class="flex justify-center">
+```mermaid {scale: 0.6}
+sequenceDiagram
+    syncWait->>ThreadSender: `connect`
+    ThreadSender->>Thread's OP: construct
+    syncWait->>Thread's OP: `start`
+    note right of Thread's OP: "on a new thread"
+    Thread's OP->>via: `setValue`
+    via->>just(42): `connect`
+    just(42)->>OperationalState: construct
+    via->>OperationalState: `start`
+    OperationalState->>syncWait: `setValue`
+```
+</div>
+
+<!--
+
+This shows the sequence of calls of the composition of the ThreadSender and the just(42)
+
+There is a whole lot going on it, most of it will be inlined however.
+
+-->
+---
+
+# Senders/Receivers
 Schedulers
 
 ```d
 void main() @safe {
-    auto pool = stdTaskPool(1);
+    auto pool = stdTaskPool(2);
 
     auto w = just(42)
         .on(pool.getScheduler)
@@ -887,24 +938,18 @@ void main() @safe {
 
 ```
 
----
+<!--
 
-# Senders/Receives
-Chaining
+Typically we don't use ThreadSender directly but use schedulers instead.
 
-```d
-void main() @safe {
-    auto pool = stdTaskPool(1);
+Here is an std.parallelism taskPool of 2 threads.
 
-    auto w = just(42)
-        .on(pool.getScheduler)
-        .then((int i) => i * 2)
-        .syncWait();
+One thing to note is that this pool is scoped. Which means that once a sender is scheduled on it, you cannot escape it anymore, thanks to dip1000.
 
-    assert(w.value == 84);
-}
-```
 
+Next up is a little quiz for you.
+
+-->
 
 ---
 
@@ -912,22 +957,22 @@ void main() @safe {
 whenAll algorithm
 
 ```d
-auto someFooSender() { /* ... */ }
-auto someBarSender() { /* ... */ }
+auto fooSender() @safe { /* ... */ }
+auto barSender() @safe { /* ... */ }
 
-void foobar() {
-    whenAll(someFooSender, someBarSender)
-        .syncWait(); // what ought to happen if either `someFooSender` or `someBarSender` fails?
+void foobar() @safe {
+    whenAll(fooSender, barSender)
+        .syncWait(); // what ought to happen if either `fooSender` or `barSender` fails?
 }
 ```
 
 <div v-click>
 How about in structured programming:
 ```d
-auto foo() { /* ... */ }
-auto bar() { /* ... */ }
+auto foo() @safe { /* ... */ }
+auto bar() @safe { /* ... */ }
 
-void foobar() {
+void foobar() @safe {
     foo(); // what happens if this one fails? lets say it throws an Exception
     bar();
 }
@@ -938,47 +983,32 @@ void foobar() {
 
 Lets look a bit at structured programming.
 
-Think back about the statement earlier that an owner must always outlive everything it owns.
+`whenAll` is an asynchronous algorithm that takes 2 or more senders and completes when all of them are completed.
 
-in this case `whenAll` owns both someFooSender and someBarSender, it cannot complete until both of them are.
+The question now is, what happens if either fooSender or barSender fails?
 
-If one of them errors, there is little value in the other one, and `whenAll` has to complete as well, forwaring the error. But not until it first cancelled and awaited the someBarSender. 
+How about in structured programming?
+
+There, if foo fails, foobar fails, and bar never gets executed.
+
+Here with `whenAll` both sender might run in parallel.
+
+If one of them fails, the other might still run. So what do we do?
+
+Remember, with structured concurrency we want an owner to outlive everything it own.
+
+Here `whenAll` owns both fooSender and barSender, it cannot complete until both of them are.
+
+Also, we want errors to propagate upwards, so if one of them errors, then `whenAll` needs to error as well. But it first has to ensure both fooSender and barSender are done. So it has to cancel and await anything still running whenever one of them errors. 
+
+This means *when whenAll is done*, fooSender and barSender are done. Always.
+
+And not just with `whenAll`, this guarantee is kept with all the asynchronous algorithms. Every one of them.
+
+That makes things for you, the programmer, a lot easier. Because you can use your normal sequential reasoning, which is reflected in the code.
 
 -->
 
----
-
-# Senders/Receivers
-retry algorithm
-
-```d
-auto someFooSender() { /* ... */ }
-auto someBarSender() { /* ... */ }
-
-void foobar() {
-    whenAll(someFooSender.retry(MaxTimes(3)), someBarSender)
-        .syncWait(); // What ought to happen if `someBarSender` fails?
-}
-```
-
----
-
-# Senders/Receivers
-race algorithm
-
-```d
-auto someFooSender() { /* ... */ }
-auto someBarSender() { /* ... */ }
-
-auto foobar() {
-    return whenAll(someFooSender.retry(MaxTimes(3)), someBarSender);
-}
-
-void fun() {
-    race(foobar(), delay(10.secs))
-        .syncWait();
-}
-```
 ---
 
 # Senders/Receivers
@@ -1037,44 +1067,140 @@ Operations:<br>
 </div>
 </div>
 
----
+<!--
 
-# What about promise?
+Which brings me to the concept of a narrow waist.
+
+Instead of writing special code for each combination of Sender and asynchrnous algorithm, we only have to write each Sender and each algorithm separately.
+
+By standarizing on a glue layer, any asynchronous computation expressed as a Sender can use any of the asynchronous algorithms.
+
+Plus any we'll write in the future.
+
+On the right you can see a couple dozen I wrote, but additional ones can be written either in the library or in your own libraries or applications.
+
+Some of them aren't easy to write, but luckily we only have to write them once.
+
+Lets go back to the foo and bar Sender and compose some more.
+
+-->
 
 ---
 
 # Senders/Receivers
-Threadpools
+retry algorithm
 
 ```d
-auto someSender() { /* ... */ }
-auto anotherSender() { /* ... */ }
+auto fooSender() @safe { /* ... */ }
+auto barSender() @safe { /* ... */ }
 
-auto fun() {
-    auto pool = stdTaskPool(2);
+auto foobar() @safe {
+    return whenAll(fooSender.retry(MaxTimes(3)), barSender);
+}
 
-    auto s1 = someSender().on(pool.getScheduler);
-    auto s2 = anotherSender().on(pool.getScheduler);
-
-    whenAll(s1, s2).syncWait;
+void fun() @safe {
+    foobar().syncWait(); // What ought to happen if `barSender` fails?
 }
 ```
 
-<div v-click>
-```d
-auto fun() {
-    auto pool = stdTaskPool(2);
+<!--
 
-    auto s1 = someSender().on(pool.getScheduler);
+Supposed we realized that the fooSender is a bit flaky, and we want to retry it a few times before giving up. Naturally it would have been better if it wasn't flaky, but it happens.
 
-    return s1; // Error: scope variable `s1` may not be returned
-}
-```
-</div>
+So we compose it with the `.retry` algorithm, and pass in a little Logic structure, here `MaxTimes`.
+
+Now the question is what happens if barSender fails?
+
+It doesn't matter where we are wrt retrying, the moment barSender fails, whenAll will cancel the fooSender, and forward the error upwards when its completed.
+
+Ok ok, that is great. Now our collueage comes in, really likes the foobar() function, but notices that is sometimes takes too long. He wants to add a timeout.
+
+-->
 
 ---
 
-# Shared
+# Senders/Receivers
+race algorithm
+
+```d
+auto fooSender() @safe { /* ... */ }
+auto barSender() @safe { /* ... */ }
+
+auto foobar() @safe {
+    return whenAll(fooSender.retry(MaxTimes(3)), barSender);
+}
+
+void fun() @safe {
+    foobar().timeout(10.secs).syncWait();
+}
+
+auto timeout(Sender)(Sender s, Duration d) @safe {
+    return race(s, delay(duration));
+}
+```
+
+<!--
+
+-->
+
+---
+
+# Streams
+
+Streams are build on top of Senders/Receivers.
+
+A Stream has a `.collect` function that accepts a `shared` callable and returns a Sender. Once the Sender is connected and started the Stream will call the callable zero or more times before one of the three terminal functions of the Receiver is called.
+
+```d
+void main() @safe {
+    auto w = intervalStream(1.secs, true)
+        .scan((int i) => i + 1, 0)
+        .filter((int i) => i % 2)
+        .take(5)
+        .toList
+        .syncWait;
+
+    assert(w == [0, 2, 4, 6, 8]);
+}
+```
+
+---
+
+# Conclusions
+Senders/Receivers
+
+The Senders/Receivers framework proposed in P2300 provides a structured approach to concurrency, where programmers can use abstractions, decomposition and their sequential skills to reason about their code, even in the presence of concurrency.
+
+Many of the gory details of concurrency can be abstracted away into asynchronous algorithms, which can be used on Senders to built up large task graphs representing complex concurrent code.
+
+---
+
+# Some things I appreciated in D
+@safe and dip1000
+
+Senders natually live on the stack, so their are easily scoped. dip1000 helps to not have them escape.
+
+Every night before bed I pray for safe-by-default... 🙏
+
+In contrast to ranges, the concurrency library *requires* all delegates or functions passed to it to be `@safe`. The reason is type erasure:
+
+```d
+import std.range;
+import std.algorithm;
+
+void main() @safe {
+    iota(0, 10).inputRangeObject.sum();
+}
+```
+
+---
+
+# Some things I started to appreciate in D
+Shared
+
+Every delegate passed to an function in the concurrency library *has* to be `@safe shared`. Every single one.
+
+
 
 Over time I have started to appreciate `shared`.
 
@@ -1117,7 +1243,7 @@ final class MPSCQueue(Node) {
 But the producer is shared:
 ```d
 struct MPSCQueueProducer(Node) {
-    private shared MPSCQueue!(Node)  q;
+    private shared MPSCQueue!(Node)*  q;
 
     @safe nothrow @nogc shared
     void push(Node* node) {
@@ -1130,47 +1256,31 @@ struct MPSCQueueProducer(Node) {
 
 ---
 
-# Streams
+# Shared
+REST example
 
-A Stream has a `.collect` function that accepts a `shared` callable and returns a Sender. Once the Sender is connected and started the Stream will call the callable zero or more times before one of the three terminal functions of the Receiver is called.
+```d
+struct Application {
+    @Path("/") shared @safe
+    auto getXyz() { /* ... */ }
+}
 
-An exception throw in the callable will cancel the stream and complete the Sender with that exception.
-
-Streams can be cancelled by triggering the StopToken supplied via the Receiver.
-
-The callable supplied to the Stream has to annotated with `shared` because the execution context where the callable is called from is undefined.
-
-Currently there are the following Streams:
-
-- `infiniteStream`. Continously emits the same value.
-- `iotaStream`. Emits the values that span the given starting and stopping values.
-- `arrayStream`. Emits every value from the array.
-- `intervalStream`. Emits every interval.
-- `doneStream`. Upon start immediately emits cancellation.
-- `errorStream`. Upon start immediately emits an error.
-- `sharedStream`. Is used for broadcasting values to zero or more receivers. Receivers can be added and removed at any time.
-- `cycleStream`. Cycles through a ranges until cancelled.
-
-With the following operations:
-
-- `take`. Emits at most the first n values.
-- `transform`. Applies a tranformation function to each value.
-- `filter`. Filters out all values where predicate is false.
-- `scan`. Applies an accumulator function with seed to each value.
-- `sample`. Forwards the latest value of the base Stream every time the trigger Stream emits a value. If the base stream hasn't produced a (new) value the trigger is ignored.
-- `via`. Starts the Stream on the context of another Sender.
-- `throttleFirst`. Limits a Stream by starting a cooldown period after each value during which no newer values are emitted.
-- `throttleLast`. Like `throttleFirst` but only emits the latest value after the cooldown.
-- `debounce`. Limits a Stream by only emitting the last value after the Stream has not emitted for a duration.
-- `slide`. Slides a window over the stream and emits each full window as an array.
-- `toList`. Converts the Stream into a Sender that completes with an array that contains all the items emitted. Be careful to use this on finite streams only.
-- `flatMapConcat`. For each value runs the supplied function and starts the returned `Sender`. The inner `Sender` must be completed before another is started.
-- `flatMapLatest`. For each value runs the supplied function and starts the returned `Sender`. A `Sender` that is still running when the next value arrives is cancelled.
+void main() @safe {
+    auto pool = stdTaskPool(16);
+    auto app = shared Application();
+    auto listener = HttpListener("0.0.0.0", 8080);
+    listener
+        .handleRequests(app)
+        .withScheduler(pool.getScheduler())
+        .syncWait().assumeOk;
+}
+```
 
 ---
 
-
-<Tweet id="1017090215788204032" />
+<div class="flex justify-center h-full items-center">
+<Tweet id="1017090215788204032" class="w-1/2"/>
+</div>
 
 ---
 
@@ -1180,7 +1290,14 @@ Some people don't quite like having to write a sender, or to nest things. For th
 
 ---
 
-# No-sync / no-lock task graphs
+# The global lockdown of locks
+https://accu.org/journals/overload/28/158/teodorescu/
+
+Introduces the concept of a Serializer. It is a scheduler that only starts a limited amount of Senders at the same time.
+
+If you represent your application as a task graph of Senders, where each Sender is a *unit of work*, and schedule them either on a specific Serializer (if you need exclusive execution) or on a global Scheduler, then you don't need to use any synchronisation.
+
+How is this not just another lock in disguise? Well, it doesn't block. It provides exclusive execution without blocking any thread.
 
 ---
 
@@ -1189,6 +1306,100 @@ Some people don't quite like having to write a sender, or to nest things. For th
 
 ---
 
-# Learn More
+A. Lee
 
-[Documentations](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/showcases.html)
+I will argue that we must (and can) build concurrent models of computation that are far more
+deterministic, and that we must judiciously and carefully introduce nondeterminism where needed.
+Nondeterminism should be explicitly added to programs, and only where needed, as it is in sequen-
+tial programming. Threads take the opposite approach. They make programs absurdly nondeter-
+ministic, and rely on programming style to constrain that nondeterminism to achieve deterministic
+aims
+
+---
+
+# I wanna write my own Sender
+Chaining to another
+
+```d
+auto regularFunction(int i) @safe {
+    // [...]
+    return i * 3;
+}
+
+auto sender1(int i) @safe {
+    return just(i).then(regularFunction);
+}
+
+auto sender2(int i) @safe {
+    return justFrom(() @safe shared => regularFunction(i));
+}
+```
+
+<!--
+
+A typical way is to chain something to an existing Sender, or use a helper function to create a Sender.
+
+With `sender1` we capture the input in a ValueSender, and then chain the regularFunction as a continuation.
+
+With `sender2` we create a delegate and turn it into a Sender via `justFrom`. Note this allocates, as opposed to sender1, which doesn't.
+
+-->
+
+---
+
+# I wanna write my own Sender
+Cancellation
+
+```d
+auto regularFunction(StopToken token, int i) @safe {
+    // [...]
+    if (token.isStopRequested)
+        throw Exception("Cancelled");
+    return i * 3;
+}
+
+auto sender1(int i) @safe {
+    return just(i).withStopToken(regularFunction);
+}
+```
+
+<!--
+
+A typical way is to chain something to an existing Sender, or use a helper function to create a Sender.
+
+With `sender1` we capture the input in a ValueSender, and then chain the regularFunction as a continuation.
+
+With `sender2` we create a delegate and turn it into a Sender via `justFrom`. Note this allocates, as opposed to sender1, which doesn't.
+
+-->
+
+---
+
+# Senders/Receivers
+Threadpools
+
+```d
+auto someSender() { /* ... */ }
+auto anotherSender() { /* ... */ }
+
+auto fun() {
+    auto pool = stdTaskPool(2);
+
+    auto s1 = someSender().on(pool.getScheduler);
+    auto s2 = anotherSender().on(pool.getScheduler);
+
+    whenAll(s1, s2).syncWait;
+}
+```
+
+<div v-click>
+```d
+auto fun() {
+    auto pool = stdTaskPool(2);
+
+    auto s1 = someSender().on(pool.getScheduler);
+
+    return s1; // Error: scope variable `s1` may not be returned
+}
+```
+</div>
