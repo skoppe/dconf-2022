@@ -1433,6 +1433,7 @@ How is this not just another lock in disguise? Well, it doesn't block. It provid
 
 # Future
 
+- There are some places that require more thread safety
 - There is a nasty backpressure problem in nested streams
 - Integrate with Fibers
 - Integrate with eventloops (liburing, kqueue, IOCP, etc.)
