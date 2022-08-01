@@ -1476,4 +1476,5 @@ How is this not just another lock in disguise? Well, it doesn't block. It provid
 - Implement more asynchronous algorithms
 - Implement an HTTP Server
 - Tutorials/guides how to write custom Senders
+- Task local GC?
 - etc.
