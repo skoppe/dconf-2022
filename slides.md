@@ -4,7 +4,6 @@ theme: seriph
 # random image from a curated Unsplash collection by Anthony
 # like them? see https://unsplash.com/collections/94734566/slidev
 # apply any windi css classes to the current slide
-class: 'text-center'
 # https://sli.dev/custom/highlighters.html
 highlighter: shiki
 # show line numbers in code blocks
@@ -20,18 +19,59 @@ drawings:
 css: unocss
 ---
 
-# Structured Concurrency
+<div class="flex flex-col h-full">
+<h1>Structured Concurrency</h1>
+<div class="grow h-48"></div>
 
+<div class="flex space-between items-end">
+    <div class="flex bg-white text-black rounded-xl px-4 py-2">
+      <mdi-link class="text-xl mr-2"/>
+      <a class="" href="https://skoppe.github.io/dconf-2022/">https://skoppe.github.io/dconf-2022/</a>
+    </div>
+    <div class="grow"></div>
+    <img src="/qr-skoppe-github-i.svg" class="w-1/8 rounded-2xl">
+</div>
+</div>
 
 ---
 class: flex flex-col
 ---
 
+# Thanks
+
+<style>
+.slidev-layout li {
+  line-height: 1.6em;
+}
+</style>
+
+- Marin Sústrik ([Structured Concurrency](https://250bpm.com/blog:71/))
+- Roman Elizarov ([Kotlin Concurrency](https://elizarov.medium.com/structured-concurrency-722d765aa952))
+- Nathaniel J. Smith ([Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/))
+- Michał Dominiak
+- Georgy Evtushenko
+- Lewis Baker
+- Lucian Radu Teodorescu
+- Lee Howes
+- Kirk Shoop
+- Michael Garland
+- Eric Niebler
+- Bryce Adelstein Lelbach
+- Laeeth Isharc
+<br>
+<br>
 # All views expressed herein are my own
-https://skoppe.github.io/dconf-2022/
 
-<img src="/qr-skoppe-github-i.svg" class="m-auto w-1/4 rounded-2xl">
+<!--
 
+- Marin. Author of zeromq, nanomsg.
+- Roman. Project lead of kotlin languages.
+- Nathaniel. Author libtrio
+- Rest of them from C++ P2300 proposal
+- And laeeth for pointing me to the C++ proposal
+
+
+-->
 ---
 
 # Microprocessor Trend Data
@@ -95,26 +135,43 @@ class: 'flex flex-col h-full'
 
 # Different ways to paint a house
 
-<div class="overflow-x-scroll overflow-y-hidden">
-```mermaid {scale: 1.0, theme: 'forest'}
-gantt
-    dateFormat HH:mm
-    axisFormat %H:%M
-    todayMarker off
-    section Sequential
-    Paint rooms      :a1, 10:00, 6hours
-    section Parallel
-    Paint room 1     :a2, 10:00, 2hours
-    Paint room 2     :a2, 10:00, 2hours
-    Paint room 3     :a2, 10:00, 2hours
-    section Concurrent
-    Paint room 1 first    :a3, 10:00, 30min
-    Paint room 2 first    :a4, 10:30, 30min
-    Paint room 3 first    :a5, 11:00, 30min
-    Paint room 1 second    :a3, 11:30, 30min
-    Paint room 2 second    :a4, 12:00, 30min
-    Paint room 3 second    :a5, 12:30, 30min
-```
+<br><br>
+<div class="flex flex-col w-full">
+    <div class="flex w-full">
+        <span class="w-1/8">Sequential</span>
+        <span class="bg-green-700 text-white border w-full text-center rounded">Paint Rooms</span>
+    </div>
+    <div class="flex w-full">
+        <span class="w-1/8">Parallel</span>
+        <div class="flex w-full flex-col">
+          <span class="bg-green-700 text-white border w-1/3 text-center rounded">Paint Room 1</span>
+          <span class="bg-green-700 text-white border w-1/3 text-center rounded">Paint Room 2</span>
+          <span class="bg-green-700 text-white border w-1/3 text-center rounded">Paint Room 3</span>
+        </div>
+    </div>
+    <div class="flex w-full">
+        <span class="w-1/8">Concurrent</span>
+        <div class="flex w-full flex-col">
+          <div class="flex">
+            <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 1 first</span>
+            <div class="w-32"></div>
+            <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 1 second</span>
+          </div>
+          <div class="flex">
+              <span class="bg-green-700 text-white border ml-16 w-1/12 text-center rounded">Paint Room 2 first</span>
+            <div class="w-32"></div>
+            <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 2 second</span>
+          </div>
+          <div class="flex">
+              <span class="bg-green-700 text-white border ml-32 w-1/12 text-center rounded">Paint Room 3 first</span>
+            <div class="w-32"></div>
+            <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 3 second</span>
+          </div>
+        </div>
+    </div>
+    <div class="flex w-full pl-24 pt-4">
+      <div class="w-full h-4 border-l border-r"><span class="border-t h-1 w-full block mt-2"></span></div>
+    </div>
 </div>
 
 <!--
@@ -144,6 +201,7 @@ Which leads me into the next slide.
 - Order violation 
 - Atomicity violation
 
+[Data Race Patterns in Go](https://eng.uber.com/data-race-patterns-in-go/)  
 [Understanding Real-World Concurrency Bugs in Go](https://songlh.github.io/paper/go-study.pdf)  
 [A Comprehensive Study on Real World Concurrency
 Bugs in Node.js](https://dl.acm.org/doi/pdf/10.5555/3155562.3155628)  
@@ -151,12 +209,49 @@ Bugs in Node.js](https://dl.acm.org/doi/pdf/10.5555/3155562.3155628)
 Development Support for Actor-based Programs](https://arxiv.org/pdf/1706.07372.pdf)  
 [JaConTeBe: A Benchmark Suite of Real-World Java
 Concurrency Bugs](https://mir.cs.illinois.edu/marinov/publications/LinETAL15JaConTeBe.pdf)  
-[Data Race Patterns in Go](https://eng.uber.com/data-race-patterns-in-go/)  
 
 
 <!--
 
 plenty of bugs
+
+Here are some papers about real world concurrency bugs in various languages.
+
+If you go through the papers you will notice a common theme: the concurrency apis are too low-level and it is very easy to introduce concurrency bugs.
+
+Not only are these bugs harder to track down then non concurrency bugs, they can also stay hidden for a long time.
+
+-->
+
+---
+class: 'flex flex-col h-full'
+---
+
+# The Problem With Threads
+
+<div class="shadow bg-gray-100 p-4 m-4 dark:bg-gray-700">
+<mdi-format-quote-open />
+Threads are a seemingly straightforward adaptation of the dominant sequential model of
+computation to concurrent systems. [...]
+Many technologists are pushing for increased use of multithreading in software in order to take
+advantage of the predicted increases in parallelism in computer architectures. In this paper, I
+argue that this is not a good idea. [...]
+<b>Threads discard the most essential and appealing properties of sequential computation: understandability, predictability, and determinism</b>.
+[...]
+I argue for the development of concurrent coordination languages based on sound,
+<b>composable</b> formalisms. I believe that such languages will yield much more reliable, and more
+concurrent programs.
+<mdi-format-quote-close />
+<span class="block text-right mt-4">
+<a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-1.pdf">Except from "The Problem with Threads" by Edward A. Lee. 2006</a>
+
+</span>
+</div>
+
+<!--
+
+The paper is a bit outdated, but this reasoning is spot on. Threads are just too easy to use incorrectly. Not to mention the synchronization primitives people are required to use to coordinate work on several threads.
+
 
 -->
 
@@ -195,13 +290,13 @@ void gun() {
 
 These are some of the usual suspects in D.
 
-All of them have a similar api like here on the right.
+All of them have a similar api like here on the right. Many languages offering low level threading have a similiar api.
 
 You spawn something, and then later join it.
 
-I tried mecca and ocean as well, but couldn't get them to compile.
+There is something really wrong with the api.
 
-There is just one problem. I am going to go to the next slide, and only two words are going to change here on the right.
+I am going to go to the next slide, and only two words are going to change here on the right.
 
 I hope that can illustrate the problem a bit.
 
@@ -241,21 +336,26 @@ void gun() {
 </div>
 
 <!--
+
+Did you see that?
+
+spawn and join are just like new and delete.
+
 How does that make you feel?
 
-Many of the concurrency API's we use are very similar to Manual Memory Managentment.
+Do you like new and delete?
 
 What is actually the problem with new and delete?
 
 "you forget the delete."
 
-Well that is more a symptom. The problem with Manual Memory Management is the fact that it splits up the resource management into two pieces, one we put here, and the other there.
+Well that is more a symptom. The problem with Manual Memory Management is the fact that it splits up the resource management into two pieces, one we put at the beginning and the other one "when we are done with it".
+
+So the problem isn't that you forget the delete, the problem is that it isn't clear where to put it, because you don't know when you are done with it. You'll have to understand a lot more than the surroundings of where ever you end up putting it. You need to examine everything from new to delete.
 
 You could be lucky and it might be in the same function, or maybe in the same file. But it might be only in the same folder, or worse, in some other one.
 
 Between them there is only this invisible link, which you can only see if you analyse the code in between.
-
-So the problem isn't that you forget the delete, the problem is that it isn't clear where to put it. You'll have to understand a lot more than the surroundings of where ever you end up putting it. You need to examine everything from new to delete.
 
 And when you did the hard work and concluded that it *has* to go at a specific spot in the code, there is almost nothing you can do to make your understanding clear to anyone else, including youself.
 
@@ -265,7 +365,7 @@ With concurrency we have a similar problem, that we end up splitting the spawn a
 ---
 
 # Concurrency in D
-Is unstructured
+Is too low-level and is unstructured
 
 - fire-and-forget
 - unclear ownership
@@ -277,9 +377,9 @@ Is unstructured
 <!--
 
 spawning things is way easier that correctly managing them.  
-it isn't clear who owns what  
+it isn't clear who owns what - you spawn a task, and who is the owner?? I dunno the runtime?  
 the lifetime of a concurrent task isn't know, not even relative to something else.  
-error handling is something the user has to built itself  
+error handling is something the user has to built itself, I tried all the ways to spawn a concurrent by immediately throwing a Thread  
 cancellation is left as an "exercise for the reader"  
 nothing about it is composable  
 
@@ -560,12 +660,29 @@ Top-down we have decomposition, bottom-up we have composition. With that we have
 Composition allows to compose code. We don't have composition with concurrency. We can write a function that retries another function max n times. A for loop, a counter, error handling, and forwarding the error when its retried too often. But doing this with an concurrent function requires a lot of DIY. This is because there is no standard way to call a concurrent function, so we have no way to compose them. This means there are no async algorithms readily available, so people code what they need, with all the bugs that that ensues.
 
 
+-->
+
+---
+class: 'text-center h-full flex flex-col justify-center'
+---
+
+# Structured Programming
+
+# +
+
+# Concurrency
+
+# = 
+
+# Structured Concurrency
+
+<!--
+
 Lets examine what happens if we apply the principles of structured programming to concurrency.
 
 But before that, lets look at the cornerstone of concurrency: the asynchronous function.
 
 -->
-
 ---
 
 # Asynchronous Functions
@@ -622,23 +739,7 @@ That is not good. We want to stay in the world of structured programming, becaus
 
 This is just like regular programming. When you call a function, that function has to complete before the caller can.
 
-<>
-
-//TODO: what?
-
-We need to shift our mindset a bit and ask ourselves the question: "who is the owner?".
-
-
-
-
-Just like with structured programming, one entry, one exit, all encapsulated in one block
-
-This means we need to set the continuation before we start the async work.
-
-- An error in an async functions must naturally bubble up to its owner
-
-
-It allows control flow to remain readily evident by the structure of the source code despite the presence of concurrency.
+It allows control flow to be evident by the structure of the source code despite the presence of concurrency.
 -->
 
 ---
@@ -651,7 +752,7 @@ Error handling and cancellation
 <ul>
 <li>Errors in asynchronous computations need to be forwarded to their owner</li>
 <li>An owner needs to be able to cancel any asynchronous computations it owns</li>
-<li>And they needs to be able to signal completion of said cancellation</li>
+<li>And asynchronous computations needs to be able to signal completion of said cancellation</li>
 </ul>
 
 
@@ -703,17 +804,17 @@ Asynchronous computations need a way to:
 <ol>
 <li>signal normal completion (return value)</li>
 <li>signal error (throw exception)</li>
-<li>signal cancellation</li>
+<li>signal done cancelling</li>
 </ol>
 
 <!--
 
-Just like with structured programming, one entry, one exit, all encapsulated in one block
+These are the informal rules of structured concurrency.
 
-This means we need to set the continuation before we start the async work.
+None of the concurrency apis in D follow these rules. They probably break every one of them.
 
+Now we come to the 2nd part of the presentation.
 
-It allows control flow to remain readily evident by the structure of the source code despite the presence of concurrency.
 -->
 
 ---
@@ -742,11 +843,10 @@ std::execution
 </dl>
 
 <!--
-C++ has P2300 proposal for a framework for managing asynchronous execution on generic execution contexts.
+
+C++ has P2300 proposal for a framework for managing asynchronous execution on generic execution contexts. That is a mouthful. Managing asynchronous execution. On generic execution contexts.
 
 I was a bit skeptical at first, but it turns out it is actually fully structured.
-
-I implemented it roughly verbatim in D.
 
 -->
 
@@ -758,7 +858,7 @@ I implemented it roughly verbatim in D.
 <mdi-format-quote-open />
 Today, C++ <b>software is increasingly asynchronous and parallel</b>, a trend that is likely to only continue going forward. <b>Asynchrony and parallelism appears everywhere, from processor hardware interfaces, to networking, to file I/O, to GUIs, to accelerators.</b> [...]
 
-While the C++ Standard Library has a rich set of concurrency primitives (std::atomic, std::mutex, std::counting_semaphore, etc) and lower level building blocks (std::thread, etc), **we lack a Standard vocabulary and framework for asynchrony and parallelism** that C++ programmers desperately need. std::async/std::future/std::promise, C++11’s intended exposure for asynchrony, is inefficient, hard to use correctly, and severely lacking in genericity, making it unusable in many contexts. [...]
+While the C++ Standard Library has a rich set of concurrency primitives (std::atomic, std::mutex, std::counting_semaphore, etc) and lower level building blocks (std::thread, etc), **we lack a Standard vocabulary and framework for asynchrony and parallelism** that C++ programmers desperately need. <b>std::async/std::future/std::promise</b>, C++11’s intended exposure for asynchrony, is <b>inefficient, hard to use correctly, and severely lacking in genericity</b>, making it unusable in many contexts. [...]
 
 This paper proposes a Standard C++ model for asynchrony, based around three key abstractions: **schedulers, senders, and receivers**, and a set of **customizable asynchronous algorithms**.<mdi-format-quote-close />
 </div>
@@ -767,7 +867,7 @@ This paper proposes a Standard C++ model for asynchrony, based around three key 
 
 The biggest thing missing here is **structured**. "We lack a structured framework for asynchrony".
 
-I won't go into much detail on how sender/receivers work, but we will discuss some example code that uses them, and convince you that it follows all of the structured concurrency principles we talked about.
+I won't go into much detail on how sender/receivers work, but we will discuss some example code that uses them.
 
 -->
 
@@ -811,7 +911,7 @@ A Sender roughly corresponds to the asynchronous computation we talked about ear
 
 A Receiver correspondingly receives either the value, the error or the cancellation.
 
-A ValueSender just sends one value.
+Here we have a ValueSender just sends one value.
 
 As you can see the 'Sender' here is just a struct with a single value. It takes up no more space than the value itself. It requires no allocations. 
 
@@ -890,7 +990,6 @@ Now it does though.
 
 We composed the just(42) sender to run through the ThreadSender.
 
-The ThreadSender starts up a new thread, and calls the setValue of the receiver. Which, is going to start the just(42) sender. Effectively this means the just(42) sender runs on a separate thread.
 
 -->
 ---
@@ -917,7 +1016,7 @@ sequenceDiagram
 
 This shows the sequence of calls of the composition of the ThreadSender and the just(42)
 
-There is a whole lot going on it, most of it will be inlined however.
+The ThreadSender starts up a new thread, and calls the setValue of the receiver. Which, is going to start the just(42) sender. Effectively this means the just(42) sender runs on a separate thread.
 
 -->
 ---
@@ -981,7 +1080,7 @@ void foobar() @safe {
 
 <!--
 
-Lets look a bit at structured programming.
+We are going to introduce the `whenAll` algorithm.
 
 `whenAll` is an asynchronous algorithm that takes 2 or more senders and completes when all of them are completed.
 
@@ -1003,7 +1102,7 @@ Also, we want errors to propagate upwards, so if one of them errors, then `whenA
 
 This means *when whenAll is done*, fooSender and barSender are done. Always.
 
-And not just with `whenAll`, this guarantee is kept with all the asynchronous algorithms. Every one of them.
+And not just with `whenAll`, this guarantee is kept with all the asynchronous algorithms that we have implemented. Every single one of them.
 
 That makes things for you, the programmer, a lot easier. Because you can use your normal sequential reasoning, which is reflected in the code.
 
@@ -1141,6 +1240,14 @@ auto timeout(Sender)(Sender s, Duration d) @safe {
 
 <!--
 
+Here we wrote a helper `timeout` function that races the Sender against a delay sender, which is just a timer. Race completes with the first one that completes successfully, or with the first error if all of them error.
+
+Whenever foobar takes more than 10 secs, the whole thing will be cancelled.
+
+This show a bit of the composability you get.
+
+It doesn't stop there. We also have streams.
+
 -->
 
 ---
@@ -1149,7 +1256,25 @@ auto timeout(Sender)(Sender s, Duration d) @safe {
 
 Streams are build on top of Senders/Receivers.
 
-A Stream has a `.collect` function that accepts a `shared` callable and returns a Sender. Once the Sender is connected and started the Stream will call the callable zero or more times before one of the three terminal functions of the Receiver is called.
+```d
+void main() @safe {
+    intervalStream(1.secs)
+        .collect(() => writeln("Hello World!"))
+        .syncWait();
+}
+```
+
+<!--
+A stream is conceptually just an asynchronous range.
+
+It has a `.collect` function that accepts a `shared` callable which returns a Sender. Once the Sender is connected and started the Stream will call the callable zero or more times before one of the three terminal functions of the Receiver is called.
+
+-->
+
+---
+
+# Streams
+Compose as well
 
 ```d
 void main() @safe {
@@ -1157,32 +1282,60 @@ void main() @safe {
         .scan((int i) => i + 1, 0)
         .filter((int i) => i % 2)
         .take(5)
-        .toList
-        .syncWait;
+        .toList()
+        .syncWait();
 
-    assert(w == [0, 2, 4, 6, 8]);
+    assert(w.value == [0, 2, 4, 6, 8]);
 }
 ```
 
+<!--
+
+And they compose as well.
+
+So, the conclusion.
+-->
+
+---
+class: 'text-center h-full flex flex-col'
 ---
 
-# Conclusions
-Senders/Receivers
+<div class="h-1/3">
+</div>
 
-The Senders/Receivers framework proposed in P2300 provides a structured approach to concurrency, where programmers can use abstractions, decomposition and their sequential skills to reason about their code, even in the presence of concurrency.
+<div class="h-1/3">
+<h1>Senders/Receivers</h1>
+
+<h1>=</h1>
+
+<h1>Structured Concurrency</h1>
+</div>
+
+
+<div class="flex h-1/3 my-auto justify-end items-end">
+  <a href="https://github.com/symmetryinvestments/concurrency" target="_blank" alt="GitHub"
+    class="text-xl icon-btn opacity-50 !border-none">
+symmetryinvestments/concurrency
+    <carbon-logo-github />
+  </a>
+</div>
+<!--
+
+Senders/Receivers provide a structured approach to concurrency, where programmers can familiar tools like abstractions, (de)composition and their sequential reasoning to write and understand their code.
 
 Many of the gory details of concurrency can be abstracted away into asynchronous algorithms, which can be used on Senders to built up large task graphs representing complex concurrent code.
 
+-->
+
 ---
 
-# Some things I appreciated in D
-@safe and dip1000
+# @safe and dip1000
 
-Senders natually live on the stack, so their are easily scoped. dip1000 helps to not have them escape.
+1. Senders naturally live on the stack, and dip1000 helps to not have them escape.
 
-Every night before bed I pray for safe-by-default... 🙏
+2. Every night before bed I pray for safe-by-default... 🙏
 
-In contrast to ranges, the concurrency library *requires* all delegates or functions passed to it to be `@safe`. The reason is type erasure:
+In contrast to ranges, the concurrency library *requires* all delegates or functions passed to it to be `@safe`. The reason is type erasure. The following code fails to compile:
 
 ```d
 import std.range;
@@ -1195,20 +1348,25 @@ void main() @safe {
 
 ---
 
-# Some things I started to appreciate in D
-Shared
-
-Every delegate passed to an function in the concurrency library *has* to be `@safe shared`. Every single one.
+# Shared <mdi-heart class="text-red-700 text-3xl"/>
 
 
+- Shared can be your friend too.
+- In the concurrency library all user supplied delegates must be `shared delegate`'s
+- Why isn't the delegate passed to core.Thread a `shared delegate`?
+- If there are a lot of `cast(shared)` and `cast()` then you are doing it wrong.
+
+<!--
+
+Shared is your friend. It helps you express to the compiler all the things that are accessed from multiple execution contexts. And the compiler helps you to honor that.
+
+Every delegate passed to an function in the concurrency library *has* to be `@safe shared`. Every single one. This is because we don't know on which execution context a continuation is going to be called.
+
+But this is a good thing. Cause it means we can take any Sender, and just schedule it anywhere. Inline, on a Fiber, on another Thread. Plus it highlights all the places in your code where you have shared access. This forces you to think about them and about the possible contention.
 
 Over time I have started to appreciate `shared`.
 
-I remember a time almost a decade ago when I really disliked `shared`. That was mostly because I couldn't get it to work.
-
-- In the concurrency library all continuations are `shared delegate`'s
-- Why isn't the delegate passed to core.Thread a `shared delegate`?
-- If there are a lot of `cast(shared)` and `cast()` then you are doing it wrong.
+-->
 
 ---
 
@@ -1278,42 +1436,47 @@ void main() @safe {
 
 ---
 
-<div class="flex justify-center h-full items-center">
-<Tweet id="1017090215788204032" class="w-1/2"/>
-</div>
-
----
-
-# Fibers
-
-Some people don't quite like having to write a sender, or to nest things. For them there is the fiber escape hatch. We can integrate with Fibers so that fibers can await an Sender by simply yielding, and conversely to turn a Fiber into a Sender.
-
----
-
 # The global lockdown of locks
 https://accu.org/journals/overload/28/158/teodorescu/
 
-Introduces the concept of a Serializer. It is a scheduler that only starts a limited amount of Senders at the same time.
+Introduces the concept of a Serializer.
+
+```d
+auto mySerializer = new Serializer(1);
+
+auto fun() @safe {
+    return sequence(
+        step1(),
+        step2().on(mySerializer),
+        step3()
+    );
+}
+```
+
+<!--
+
+In the article teodorescu presents an alternative for the many synchronisation primitives we typically use, from mutexes, to semaphores, etc.
+
+A Serializer is a scheduler that only runs a limited amount of Senders at the same time.
 
 If you represent your application as a task graph of Senders, where each Sender is a *unit of work*, and schedule them either on a specific Serializer (if you need exclusive execution) or on a global Scheduler, then you don't need to use any synchronisation.
 
-How is this not just another lock in disguise? Well, it doesn't block. It provides exclusive execution without blocking any thread.
+How is this not just another lock in disguise? Well, it doesn't block. It provides exclusive access without blocking any thread.
+
+-->
 
 ---
 
 # Future
 
-
----
-
-A. Lee
-
-I will argue that we must (and can) build concurrent models of computation that are far more
-deterministic, and that we must judiciously and carefully introduce nondeterminism where needed.
-Nondeterminism should be explicitly added to programs, and only where needed, as it is in sequen-
-tial programming. Threads take the opposite approach. They make programs absurdly nondeter-
-ministic, and rely on programming style to constrain that nondeterminism to achieve deterministic
-aims
+- There is a nasty backpressure problem in nested streams
+- Integrate with Fibers
+- Integrate with eventloops (liburing, kqueue, IOCP, etc.)
+- Work stealing scheduler
+- Implement more asynchronous algorithms
+- Implement an HTTP Server
+- Tutorials/guides how to write custom Senders
+- etc.
 
 ---
 
