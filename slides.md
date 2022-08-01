@@ -94,7 +94,7 @@ in order to benefit we can't rely on frequency increase, but have to start utili
 class: 'flex flex-col h-full'
 ---
 
-# Parellism vs Concurrency
+# Parallelism & Concurrency
 
 <div class="flex h-full place-content-around">
   <div class="flex flex-col">
@@ -154,17 +154,10 @@ class: 'flex flex-col h-full'
         <div class="flex w-full flex-col">
           <div class="flex">
             <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 1 first</span>
-            <div class="w-32"></div>
+            <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 2 first</span>
+              <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 3 first</span>
             <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 1 second</span>
-          </div>
-          <div class="flex">
-              <span class="bg-green-700 text-white border ml-16 w-1/12 text-center rounded">Paint Room 2 first</span>
-            <div class="w-32"></div>
-            <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 2 second</span>
-          </div>
-          <div class="flex">
-              <span class="bg-green-700 text-white border ml-32 w-1/12 text-center rounded">Paint Room 3 first</span>
-            <div class="w-32"></div>
+              <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 2 second</span>
             <span class="bg-green-700 text-white border w-1/12 text-center rounded">Paint Room 3 second</span>
           </div>
         </div>
@@ -252,6 +245,7 @@ concurrent programs.
 
 The paper is a bit outdated, but this reasoning is spot on. Threads are just too easy to use incorrectly. Not to mention the synchronization primitives people are required to use to coordinate work on several threads.
 
+With threads you get a lot of non-determinism and you use synchronisation to get back to that deterministic world.
 
 -->
 
@@ -355,9 +349,7 @@ So the problem isn't that you forget the delete, the problem is that it isn't cl
 
 You could be lucky and it might be in the same function, or maybe in the same file. But it might be only in the same folder, or worse, in some other one.
 
-Between them there is only this invisible link, which you can only see if you analyse the code in between.
-
-And when you did the hard work and concluded that it *has* to go at a specific spot in the code, there is almost nothing you can do to make your understanding clear to anyone else, including youself.
+And when you did the hard work and concluded that it *has* to go at a specific spot in the code, there is almost nothing you can do to make your understanding clear to anyone else. People just have to take your word for it, including youself.
 
 With concurrency we have a similar problem, that we end up splitting the spawn and the join, creating similar hidden links between them. This ultimately doesn't scale and makes reasoning about it very hard.
 
@@ -593,26 +585,6 @@ You can zoom out and replace detailed things with abstractions, and zoom in givi
 
 Hence software is easier to write, since problems can be decomposed into sub-problems, and better to understand, because you dont need to know everything to understand a small part.
 
-
-TODO: talk a bit about abstractions as building blocks of code
-
-1. use of abstractions as building blocks (both in code and data)
-2. recursive decomposition of the program as a method of creation/analysis of a program
-3. local reasoning helps understandability, and scope nesting is a good way of achieving local reasoning
-4. code blocks should have one entry and one exit point
-5. soundness and completeness: all programs can be safely written in a style that enables structured programming
-
-
-
-TODO: rephrase
-Looking at a sequence of regular instructions (i.e., without loops or alternatives) is easy. The preconditions of an instruction directly depend on the postconditions of the previous instruction. This is what Dijkstra calls enumerative reasoning. The conceptual gap between a sequence of instructions and the execution of those instructions in time is minimal.
-
-If we want to treat code blocks or function calls as instructions, we should ensure that they share as many properties as possible with the simple instructions. One of these properties is single entry, single exit point. Every instruction, every block of code and every function should have one single entry point so that we can easily check whether the preconditions are met. Similarly, they should have one single exit point so that we analyse a single set of postconditions.
-
-There is another advantage of using a single entry, single exit point strategy. The blocks and the function calls have the same shape as simple instructions. That allows us to apply the same type of reasoning to code blocks and to function calls, and permits us to have a simpler recursive decomposition.
-
-<->
-
 -->
 
 ---
@@ -649,16 +621,6 @@ When doing research I remember reading an anecdote between proponents of both un
 And today structured programming has become the norm. There aren't many unstructured programming languages around.
 
 Structured programming is what we do all day every day.
-
-<>
-
-- The hierachy of modules
-each module controls those immediately below it. To say a module controls another means that it initiates the action of the other, and that the other module returns control to the first when it is finished.
-
-Top-down we have decomposition, bottom-up we have composition. With that we have a structured way to chop up problems into smaller ones, or compose solutions out of smaller ones.
-
-Composition allows to compose code. We don't have composition with concurrency. We can write a function that retries another function max n times. A for loop, a counter, error handling, and forwarding the error when its retried too often. But doing this with an concurrent function requires a lot of DIY. This is because there is no standard way to call a concurrent function, so we have no way to compose them. This means there are no async algorithms readily available, so people code what they need, with all the bugs that that ensues.
-
 
 -->
 
@@ -707,6 +669,8 @@ It has one thing the regular function doesn't, which is cancellation. This is a 
 
 Another consequence however, is that because it runs outside of the stack, many of guarantees of structured programming are abandoned as well, and all the responsibilities fall on the programmer.
 
+That ownership and lifetime is not good.
+
 -->
 
 ---
@@ -732,7 +696,7 @@ from https://blog.softwaremill.com/structured-concurrency-and-pure-functions-92d
 
 <!--
 
-That is not good. We want to stay in the world of structured programming, because it gives so many nice guarantees and allows us to write large scale reliable software.
+We want to stay in the world of structured programming, because it gives so many nice guarantees and allows us to write large scale reliable software.
 
 - "Every async function needs to have an owner" - we can't just run it fire-and-forget style
 - "An owner needs to outlive all the async functions it owns"
@@ -776,7 +740,7 @@ Just like exception bubble up the callstack, we want a similar bubbling upwards.
 
 This avoids swallowed exceptions.
 
-2. If an asynchronous computations errors, the owner still has to wait for any other asynchronous computations it might have started. The natural conclusion is that it needs a way to cancel asynchronous computations.
+2. If an asynchronous computations errors, the owner can't just bubble the error upwards, it still has to wait for any other asynchronous computations it might have started. The natural conclusion is that it needs a way to cancel asynchronous computations.
 
 That way in the presence of errors, it can cancel any outstanding work, before completing with an error itself.
 
@@ -811,7 +775,7 @@ Asynchronous computations need a way to:
 
 These are the informal rules of structured concurrency.
 
-None of the concurrency apis in D follow these rules. They probably break every one of them.
+None of the concurrency apis in D follow all these rules. In fact, they probably break every one of them.
 
 Now we come to the 2nd part of the presentation.
 
@@ -926,7 +890,7 @@ Use syncWait to start and await the Sender
 <div class="flex">
 <div class="w-1/2">
 ```d
-auto just(T t) @safe {
+auto just(T)(T t) @safe {
     return ValueSender!T(t);
 }
 
