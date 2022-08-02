@@ -19,7 +19,6 @@ drawings:
   persist: false
 # use UnoCSS (experimental)
 css: unocss
-download: true
 ---
 
 <div class="flex flex-col h-full">
