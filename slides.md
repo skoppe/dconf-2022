@@ -9,6 +9,8 @@ highlighter: shiki
 # show line numbers in code blocks
 lineNumbers: true
 # some information about the slides, markdown enabled
+title: Structured Concurrency
+titleTemplate: '%s - DConf 2022'
 info: |
   Structured Concurrency in D
   What is it, how does it work and why do we need it.
