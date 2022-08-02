@@ -175,6 +175,8 @@ concurreny - realizing that each room needs 2 layers of paint and that there is 
 
 the 2 is the fastest, but the 3rd has a higher utilisation and doesn't take as much time.
 
+Imagine instead of 3 rooms there were 100's of rooms, and instead of just one thread you have as many threads as cores. Given enough tasks it will run faster than the parallel version, because the utilisation is higher.
+
 The concurrent one is only possible because of the waiting involved. If a task doesn't have any waits, then you can't run it concurrently, but have to run it in parallel instead.
 
 Another thing to look at is the increasing complexity of managing things. In the parallel case it is still straightforward - just a simple fork+join - but in the concurrent approach, we need to keep track of more tasks and the dependecies between them.
